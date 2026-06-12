@@ -1,4 +1,11 @@
-English | [Bahasa Indonesia](README_ID.md)
+<p align="center">
+  <img src="assets/logo.png" width="140" alt="Rem - ReMusika">
+</p>
+<p align="center" style="font-size: 20px;">
+<span style="color:#7EBFE7">ReM</span>usika
+</p>
+
+English | [Indonesia](README_ID.md)
 
 # ReMusika
 
@@ -41,10 +48,9 @@ The goal is to provide a lightweight music player that:
 
 ### Installation
 
-1. Download the latest release
-2. Extract the archive to any folder
-3. Run the application
-4. Your default browser will open automatically
+1. Download the latest release, [here](https://github.com/seinkytarlicht/remusika/releases)
+2. Run the application
+3. Your default browser will open automatically
 
 If the browser does not open automatically, visit:
 
@@ -81,8 +87,8 @@ C:\Users\<your-username>\Music
 ### Clone Repository
 
 ```bash
-git clone <repository-url>
-cd <project-name>
+git clone https://github.com/seinkytarlicht/remusika.git
+cd remusika
 ```
 
 ### Run Frontend

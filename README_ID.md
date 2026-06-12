@@ -1,4 +1,11 @@
-[English](README.md) | Bahasa Indonesia
+<p align="center">
+  <img src="assets/logo.png" width="140" alt="Rem - ReMusika">
+</p>
+<p align="center" style="font-size: 20px;">
+<span style="color:#7EBFE7">ReM</span>usika
+</p>
+
+[English](README.md) | Indonesia
 
 # ReMusika
 
@@ -41,10 +48,9 @@ Tujuan utama project ini:
 
 ### Instalasi
 
-1. Download versi terbaru
-2. Extract archive ke folder yang diinginkan
-3. Jalankan aplikasi
-4. Browser default akan terbuka secara otomatis
+1. Download versi terbaru, [di sini](https://github.com/seinkytarlicht/remusika/releases)
+2. Jalankan aplikasi
+3. Browser default akan terbuka secara otomatis
 
 Jika browser tidak terbuka secara otomatis, buka alamat berikut:
 
@@ -81,8 +87,8 @@ C:\Users\<your-username>\Music
 ### Clone Repository
 
 ```bash
-git clone <repository-url>
-cd <project-name>
+git clone https://github.com/seinkytarlicht/remusika.git
+cd remusika
 ```
 
 ### Menjalankan Frontend
