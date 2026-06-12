@@ -1,9 +1,8 @@
+<br />
 <p align="center">
   <img src="assets/logo.png" width="140" alt="Rem - ReMusika">
 </p>
-<p align="center" style="font-size: 20px;">
-<span style="color:#7EBFE7">ReM</span>usika
-</p>
+<br />
 
 [English](README.md) | Indonesia
 
@@ -61,6 +60,8 @@ http://127.0.0.1:41991
 Playlist musik Anda siap digunakan.
 
 > Pastikan file musik berada di folder Musik bawaan sistem operasi.
+
+> Bermasalah: Jika halaman menampilkan halaman kosong, coba Hard Reload (`Shift` + `R`)
 
 ## Lokasi Folder Musik
 
@@ -148,7 +149,7 @@ dist/remusika
 - [x] Integrasi tray
 - [x] Pencarian lagu
 - [ ] Logo
-- [ ] Media Session API
+- [x] Media Session API
 - [ ] Playlist
 
 ## Lisensi

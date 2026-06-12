@@ -8,30 +8,33 @@ export function useMediaSession() {
       title: music.title,
       artist: music.artist,
       album: music.album,
-      artwork: [
-        {
-          src: music.image_url,
-          sizes: "512x512",
-          type: "image/jpeg",
-        },
-      ],
+      artwork: music.image_url
+        ? [
+            {
+              src: music.image_url,
+              sizes: "512x512",
+              type: "image/jpeg",
+            },
+          ]
+        : [],
     });
-
-    // // 3. Optional: Define action handlers (e.g., play, pause, seek)
-    // navigator.mediaSession.setActionHandler("play", () => {
-    //   // Trigger your Vue/Audio play logic
-    // });
-
-    // navigator.mediaSession.setActionHandler("pause", () => {
-    //   // Trigger your Vue/Audio pause logic
-    // });
   };
 
-  // const updatePlaybackState = (state) => {
-  //   if ("mediaSession" in navigator) {
-  //     navigator.mediaSession.playbackState = state; // 'none' | 'paused' | 'playing'
-  //   }
-  // };
+  const updatePlaybackState = (state: "none" | "paused" | "playing") => {
+    if ("mediaSession" in navigator) {
+      navigator.mediaSession.playbackState = state;
+    }
+  };
+  const setPrevTrack = (callback: () => void) => {
+    if ("mediaSession" in navigator) {
+      navigator.mediaSession.setActionHandler("previoustrack", callback);
+    }
+  };
+  const setNextTrack = (callback: () => void) => {
+    if ("mediaSession" in navigator) {
+      navigator.mediaSession.setActionHandler("nexttrack", callback);
+    }
+  };
 
-  return { initSession };
+  return { initSession, updatePlaybackState, setPrevTrack, setNextTrack };
 }

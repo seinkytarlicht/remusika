@@ -5,39 +5,27 @@ import type { Music } from "~/types/music";
 const route = useRoute();
 const musicStore = useMusicStore();
 
-const audioRef = ref<HTMLAudioElement | null>(null);
-const duration = ref(0);
-const currentTime = ref(0);
-const isSeeking = ref(false);
-const isPlaying = ref(false);
-const isLooping = ref(false);
+const playerStore = usePlayerStore();
 const nowPlaying = ref<Music>();
-
-watch(audioRef, (audio) => {
-  if (!audio) return;
-
-  const onLoadedMetadata = () => {
-    duration.value = audio.duration;
-  };
-
-  const onTimeUpdate = () => {
-    if (!isSeeking.value) currentTime.value = audio.currentTime;
-  };
-  onTimeUpdate();
-
-  audio.addEventListener("loadedmetadata", onLoadedMetadata);
-  audio.addEventListener("ended", nextMusic);
-  audio.addEventListener("timeupdate", onTimeUpdate);
-});
+const { setPrevTrack, setNextTrack } = useMediaSession();
 
 watch(
   [() => musicStore.loading, () => route.params.uuid],
   ([newLoading, newUuid]) => {
     if (!newLoading && newUuid) {
       nowPlaying.value = musicStore.setCurrentMusic(String(newUuid));
+      setPrevTrack(prevMusic);
+      setNextTrack(nextMusic);
     }
   },
   { immediate: true },
+);
+
+watch(
+  () => playerStore.isEnded,
+  (isEnded) => {
+    if (isEnded) nextMusic();
+  },
 );
 
 defineShortcuts({
@@ -53,20 +41,21 @@ defineShortcuts({
   },
   k: {
     handler: () => {
-      playMusic();
+      playerStore.playMusic();
     },
   },
   l: {
     handler: () => {
-      toggleLoop();
+      playerStore.toggleLoop();
     },
   },
 });
 
 function prevMusic() {
   musicStore.getPrevSong();
+  playerStore.isEnded = false;
   if (nowPlaying.value?.uuid == musicStore.currentMusic?.uuid) {
-    audioRef.value?.play();
+    playerStore.audioRef?.play();
   } else {
     navigateTo(`/play/${musicStore.currentMusic?.uuid}`);
   }
@@ -74,53 +63,11 @@ function prevMusic() {
 
 function nextMusic() {
   musicStore.getNextSong();
+  playerStore.isEnded = false;
   if (nowPlaying.value?.uuid == musicStore.currentMusic?.uuid) {
-    audioRef.value?.play();
+    playerStore.audioRef?.play();
   } else {
     navigateTo(`/play/${musicStore.currentMusic?.uuid}`);
-  }
-}
-
-function playMusic() {
-  if (!audioRef.value) return;
-
-  if (audioRef.value.paused) {
-    audioRef.value.play();
-  } else {
-    audioRef.value.pause();
-  }
-}
-
-function startSeek() {
-  if (!audioRef.value) return;
-
-  isSeeking.value = true;
-
-  audioRef.value.pause();
-}
-
-function seekMusic(value: number | undefined) {
-  if (!value) return;
-
-  currentTime.value = Number(value);
-
-  if (audioRef.value) {
-    audioRef.value.currentTime = Number(value);
-  }
-}
-
-function endSeek() {
-  isSeeking.value = false;
-
-  if (audioRef.value?.paused) {
-    audioRef.value?.play();
-  }
-}
-
-function toggleLoop() {
-  if (audioRef.value) {
-    audioRef.value.loop = !audioRef.value.loop;
-    isLooping.value = audioRef.value.loop;
   }
 }
 </script>
@@ -192,32 +139,32 @@ function toggleLoop() {
       <UIcon v-else name="i-lucide-music-2" class="size-[20%]" />
     </div>
 
-    <audio
+    <!-- <audio
       :src="nowPlaying?.audio_url"
       ref="audioRef"
       autoplay
       @play="isPlaying = true"
       @pause="isPlaying = false"
-    ></audio>
+    ></audio> -->
 
     <div
-      v-if="audioRef"
+      v-if="playerStore.audioRef"
       class="max-w-110 py-6 px-4 dark:bg-elevated/50 bg-elevated w-full flex flex-col items-center justify-center gap-2 rounded-4xl relative"
     >
       <USlider
-        v-model="currentTime"
+        v-model="playerStore.currentTime"
         :min="0"
-        :max="duration"
-        @pointerdown="startSeek"
-        @update:model-value="seekMusic"
-        @pointerup="endSeek"
+        :max="playerStore.duration"
+        @pointerdown="playerStore.startSeek"
+        @update:model-value="playerStore.seekMusic"
+        @pointerup="playerStore.endSeek"
       />
       <div class="flex justify-between items-center w-full">
         <p>
-          {{ formatTime(currentTime) }}
+          {{ formatTime(playerStore.currentTime) }}
         </p>
         <p>
-          {{ formatTime(duration) }}
+          {{ formatTime(playerStore.duration) }}
         </p>
       </div>
       <div class="flex gap-8 justify-between items-center w-full">
@@ -251,10 +198,14 @@ function toggleLoop() {
             color="primary"
             variant="subtle"
             class="rounded-full size-20 flex justify-center"
-            @click="playMusic"
+            @click="playerStore.playMusic"
           >
             <!-- the inline thing doesn't work somehow  -->
-            <UIcon v-if="!isPlaying" name="i-lucide-play" class="size-[70%]" />
+            <UIcon
+              v-if="!playerStore.isPlaying"
+              name="i-lucide-play"
+              class="size-[70%]"
+            />
             <UIcon v-else name="i-lucide-pause" class="size-[70%]" />
           </UButton>
         </UTooltip>
@@ -286,10 +237,12 @@ function toggleLoop() {
             color="primary"
             variant="ghost"
             class="rounded-full size-12 flex justify-center"
-            @click="toggleLoop"
+            @click="playerStore.toggleLoop"
           >
             <UIcon
-              :name="!isLooping ? 'i-lucide-repeat' : 'i-lucide-repeat-1'"
+              :name="
+                !playerStore.isLooping ? 'i-lucide-repeat' : 'i-lucide-repeat-1'
+              "
               class="size-full"
             />
           </UButton>

@@ -1,9 +1,8 @@
+<br />
 <p align="center">
   <img src="assets/logo.png" width="140" alt="Rem - ReMusika">
 </p>
-<p align="center" style="font-size: 20px;">
-<span style="color:#7EBFE7">ReM</span>usika
-</p>
+<br />
 
 English | [Indonesia](README_ID.md)
 
@@ -61,6 +60,8 @@ http://127.0.0.1:41991
 Your music library is now ready to use.
 
 > Make sure your music files are located inside the default Music folder of your operating system.
+
+> Known Issue: If the page is showing a blank page, try hard reload (`Shift` + `R`)
 
 ## Music Folder Location
 
@@ -148,7 +149,7 @@ dist/remusika
 - [x] Tray integration
 - [x] Search music
 - [ ] Logo
-- [ ] Media Session API
+- [x] Media Session API
 - [ ] Playlist support
 
 ## License

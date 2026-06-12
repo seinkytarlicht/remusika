@@ -5,11 +5,37 @@ useHead({
   title: "ReMusika",
 });
 
-const route = useRoute();
 const { $api } = useNuxtApp();
 const toast = useToast();
-
+const playerStore = usePlayerStore();
 const musicStore = useMusicStore();
+const { initSession, updatePlaybackState } = useMediaSession();
+
+const audioRef = ref<HTMLAudioElement>();
+
+watch(audioRef, (audio) => {
+  if (audio) {
+    playerStore.audioRef = audio;
+  }
+});
+
+watch(
+  () => musicStore.currentMusic,
+  () => {
+    if (musicStore.currentMusic) initSession(musicStore.currentMusic);
+  },
+);
+
+watch(
+  () => playerStore.isPlaying,
+  () => {
+    if (playerStore.isPlaying) {
+      updatePlaybackState("playing");
+    } else {
+      updatePlaybackState("paused");
+    }
+  },
+);
 
 onMounted(() => {
   musicStore.fetch();
@@ -150,6 +176,13 @@ async function shutdownSystem() {
     </UDashboardSidebar>
 
     <UDashboardPanel>
+      <audio
+        ref="audioRef"
+        autoplay
+        @play="playerStore.isPlaying = true"
+        @pause="playerStore.isPlaying = false"
+        :src="musicStore.currentMusic?.audio_url"
+      ></audio>
       <slot />
     </UDashboardPanel>
   </UDashboardGroup>
