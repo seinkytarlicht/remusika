@@ -16,15 +16,6 @@ type MusicServiceImpl struct {
 	Repo repository.MusicMemo
 }
 
-func (m *MusicServiceImpl) Get(uuid string) (model.Music, error) {
-	data, err := m.Repo.Find(uuid)
-	if err != nil {
-		return model.Music{}, err
-	}
-
-	return data, nil
-}
-
 func (m *MusicServiceImpl) GetImage(uuid string) (string, error) {
 	data, err := m.Repo.Find(uuid)
 	if err != nil {
@@ -32,6 +23,15 @@ func (m *MusicServiceImpl) GetImage(uuid string) (string, error) {
 	}
 
 	return data.TempImgPath, nil
+}
+
+func (m *MusicServiceImpl) Get(uuid string) (model.Music, error) {
+	data, err := m.Repo.Find(uuid)
+	if err != nil {
+		return model.Music{}, err
+	}
+
+	return data, nil
 }
 
 func (m *MusicServiceImpl) GetAll() []model.Music {

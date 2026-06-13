@@ -11,7 +11,6 @@ import (
 type MusicController interface {
 	GetAll(c fiber.Ctx) error
 	Stream(c fiber.Ctx) error
-	GetMetadata(c fiber.Ctx) error
 	GetImage(c fiber.Ctx) error
 	ReloadFolder(c fiber.Ctx) error
 }
@@ -40,21 +39,6 @@ func (m *MusicControllerImpl) Stream(c fiber.Ctx) error {
 
 	c.Set("Accept-Ranges", "bytes")
 	return c.SendFile(music.Path)
-}
-
-func (m *MusicControllerImpl) GetMetadata(c fiber.Ctx) error {
-	uuid := c.Params("uuid", "")
-
-	music, err := m.Service.Get(uuid)
-
-	if err != nil {
-		return c.JSON(fiber.Map{
-			"message": err.Error(),
-			"uuid":    uuid,
-		})
-	}
-
-	return c.JSON(music)
 }
 
 func (m *MusicControllerImpl) GetImage(c fiber.Ctx) error {

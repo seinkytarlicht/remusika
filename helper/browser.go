@@ -10,7 +10,7 @@ import (
 func OpenBrowser() {
 	var cmd string
 	var args []string
-	url := config.Url
+	url := config.AppUrl
 
 	switch runtime.GOOS {
 	case "windows":

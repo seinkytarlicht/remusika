@@ -26,7 +26,8 @@ type MusicMemo interface {
 }
 
 type MusicMemoImpl struct {
-	Musics []model.Music
+	Musics   []model.Music
+	Playlist []string
 }
 
 func (m *MusicMemoImpl) FindAll() []model.Music {
@@ -80,8 +81,8 @@ func (m *MusicMemoImpl) ReloadFolder() {
 	}
 
 	for _, lp := range listpath {
-		tmpImg := _CreateImageTemp(lp)
-		imageUrl := ""
+		hashBytes := sha1.Sum([]byte(lp))
+		uuid := hex.EncodeToString(hashBytes[:])[:12]
 
 		tags, err := taglib.ReadTags(lp)
 		if err != nil {
@@ -92,6 +93,9 @@ func (m *MusicMemoImpl) ReloadFolder() {
 		musicArtist := strings.Join(tags[taglib.Artist], ", ")
 		musicAlbum := strings.Join(tags[taglib.Album], ", ")
 		playlist := "No Playlist"
+		tmpImg, _ := _CreateImageTemp(lp)
+		imageUrl := ""
+		audioUrl := "/api/music/stream/" + uuid
 
 		if musicName == "" {
 			musicName = filepath.Base(lp)
@@ -105,18 +109,16 @@ func (m *MusicMemoImpl) ReloadFolder() {
 			musicAlbum = "No Album"
 		}
 
+		// Playlist
 		relPath, errR := filepath.Rel(musicFolder, lp)
 		if errR != nil {
 			log.Fatal(errR)
 		}
 		parts := strings.Split(relPath, string(os.PathSeparator))
-
 		if len(parts) > 1 {
 			playlist = parts[0]
+			m.Playlist = append(m.Playlist, playlist)
 		}
-
-		hashBytes := sha1.Sum([]byte(lp))
-		uuid := hex.EncodeToString(hashBytes[:])[:12]
 
 		if tmpImg != "" {
 			imageUrl = "/api/music/image/" + uuid
@@ -128,7 +130,7 @@ func (m *MusicMemoImpl) ReloadFolder() {
 			Artist:      musicArtist,
 			Playlist:    playlist,
 			Album:       musicAlbum,
-			AudioUrl:    "/api/music/stream/" + uuid,
+			AudioUrl:    audioUrl,
 			ImageUrl:    imageUrl,
 			TempImgPath: tmpImg,
 			Path:        lp,
@@ -138,29 +140,19 @@ func (m *MusicMemoImpl) ReloadFolder() {
 	m.Musics = music
 }
 
-func _CreateImageTemp(lp string) string {
-	imageBytes, errImg := taglib.ReadImage(lp)
-	if errImg != nil {
-		log.Fatalf("Failed to read image: %v", errImg)
+func _CreateImageTemp(lp string) (string, error) {
+	imageBytes, err := taglib.ReadImage(lp)
+	if err != nil {
+		return "", err
 	}
 
-	if imageBytes == nil {
-		return ""
+	filename, err := helper.CreateImageTemp(imageBytes)
+
+	if err != nil {
+		return "", err
 	}
 
-	tmpFile, errC := os.CreateTemp("", "remusika-tmpimg-*")
-	if errC != nil {
-		log.Fatalf("Failed to create temporary file: %v", errC)
-	}
-
-	defer tmpFile.Close()
-
-	_, errW := tmpFile.Write(imageBytes)
-	if errW != nil {
-		log.Fatal(errW)
-	}
-
-	return tmpFile.Name()
+	return filename, nil
 }
 
 func NewMusicMemo() MusicMemo {

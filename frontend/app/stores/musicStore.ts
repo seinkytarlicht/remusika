@@ -10,6 +10,7 @@ export const useMusicStore = defineStore("musicStore", () => {
   } = useAPI<Music[]>("/music/get-all");
 
   const currentMusic = ref<Music>();
+  const currentMusicError = ref(false);
   const queue = ref<Music[]>();
   const search = ref<string>();
 
@@ -32,13 +33,23 @@ export const useMusicStore = defineStore("musicStore", () => {
   });
 
   function setCurrentMusic(uuid: string) {
-    if (!loading.value && music.value) {
-      let curMusic = music.value.find((item) => item.uuid == uuid);
-      currentMusic.value = curMusic;
-      return curMusic;
+    if (loading.value || !music.value) {
+      currentMusicError.value = true;
+      currentMusic.value = undefined;
+      return undefined;
     }
 
-    return undefined;
+    let curMusic = music.value.find((item) => item.uuid == uuid);
+
+    if (!curMusic) {
+      currentMusicError.value = true;
+      currentMusic.value = undefined;
+      return undefined;
+    }
+
+    currentMusicError.value = false;
+    currentMusic.value = curMusic;
+    return curMusic;
   }
 
   function getPrevSong() {
@@ -79,6 +90,7 @@ export const useMusicStore = defineStore("musicStore", () => {
 
   return {
     currentMusic,
+    currentMusicError,
     music: queue,
     loading,
     error,

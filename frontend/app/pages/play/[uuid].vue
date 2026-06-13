@@ -1,42 +1,27 @@
 <script setup lang="ts">
 import { formatTime } from "~/helper/time";
-import type { Music } from "~/types/music";
 
-const route = useRoute();
 const musicStore = useMusicStore();
-
 const playerStore = usePlayerStore();
-const nowPlaying = ref<Music>();
-const { setPrevTrack, setNextTrack } = useMediaSession();
 
 watch(
-  [() => musicStore.loading, () => route.params.uuid],
-  ([newLoading, newUuid]) => {
-    if (!newLoading && newUuid) {
-      nowPlaying.value = musicStore.setCurrentMusic(String(newUuid));
-      setPrevTrack(prevMusic);
-      setNextTrack(nextMusic);
+  [() => musicStore.loading, () => musicStore.currentMusicError],
+  ([loading, err]) => {
+    if (!loading && err) {
+      navigateTo("/");
     }
-  },
-  { immediate: true },
-);
-
-watch(
-  () => playerStore.isEnded,
-  (isEnded) => {
-    if (isEnded) nextMusic();
   },
 );
 
 defineShortcuts({
   shift_alt_n: {
     handler: () => {
-      prevMusic();
+      playerStore.prevMusic();
     },
   },
   shift_n: {
     handler: () => {
-      nextMusic();
+      playerStore.nextMusic();
     },
   },
   k: {
@@ -50,26 +35,6 @@ defineShortcuts({
     },
   },
 });
-
-function prevMusic() {
-  musicStore.getPrevSong();
-  playerStore.isEnded = false;
-  if (nowPlaying.value?.uuid == musicStore.currentMusic?.uuid) {
-    playerStore.audioRef?.play();
-  } else {
-    navigateTo(`/play/${musicStore.currentMusic?.uuid}`);
-  }
-}
-
-function nextMusic() {
-  musicStore.getNextSong();
-  playerStore.isEnded = false;
-  if (nowPlaying.value?.uuid == musicStore.currentMusic?.uuid) {
-    playerStore.audioRef?.play();
-  } else {
-    navigateTo(`/play/${musicStore.currentMusic?.uuid}`);
-  }
-}
 </script>
 
 <template>
@@ -139,14 +104,6 @@ function nextMusic() {
       <UIcon v-else name="i-lucide-music-2" class="size-[20%]" />
     </div>
 
-    <!-- <audio
-      :src="nowPlaying?.audio_url"
-      ref="audioRef"
-      autoplay
-      @play="isPlaying = true"
-      @pause="isPlaying = false"
-    ></audio> -->
-
     <div
       v-if="playerStore.audioRef"
       class="max-w-110 py-6 px-4 dark:bg-elevated/50 bg-elevated w-full flex flex-col items-center justify-center gap-2 rounded-4xl relative"
@@ -181,7 +138,7 @@ function nextMusic() {
             color="primary"
             variant="subtle"
             class="rounded-full size-12 flex justify-center"
-            @click="prevMusic"
+            @click="playerStore.prevMusic"
           >
             <UIcon name="i-lucide-skip-back" class="size-[90%]" />
           </UButton>
@@ -221,7 +178,7 @@ function nextMusic() {
             color="primary"
             variant="subtle"
             class="rounded-full size-12 flex justify-center"
-            @click="nextMusic"
+            @click="playerStore.nextMusic"
           >
             <UIcon name="i-lucide-skip-forward" class="size-[90%]" />
           </UButton>

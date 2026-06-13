@@ -5,11 +5,13 @@ useHead({
   title: "ReMusika",
 });
 
+const route = useRoute();
 const { $api } = useNuxtApp();
 const toast = useToast();
 const playerStore = usePlayerStore();
 const musicStore = useMusicStore();
-const { initSession, updatePlaybackState } = useMediaSession();
+const { initSession, updatePlaybackState, setNextTrack, setPrevTrack } =
+  useMediaSession();
 
 const audioRef = ref<HTMLAudioElement>();
 
@@ -22,7 +24,11 @@ watch(audioRef, (audio) => {
 watch(
   () => musicStore.currentMusic,
   () => {
-    if (musicStore.currentMusic) initSession(musicStore.currentMusic);
+    if (musicStore.currentMusic) {
+      initSession(musicStore.currentMusic);
+      setPrevTrack(playerStore.prevMusic);
+      setNextTrack(playerStore.nextMusic);
+    }
   },
 );
 
@@ -34,6 +40,23 @@ watch(
     } else {
       updatePlaybackState("paused");
     }
+  },
+);
+
+watch(
+  [() => musicStore.loading, () => route.params.uuid],
+  ([newLoading, newUuid]) => {
+    if (!newLoading) {
+      playerStore.nowPlaying = musicStore.setCurrentMusic(String(newUuid));
+    }
+  },
+  { immediate: true },
+);
+
+watch(
+  () => playerStore.isEnded,
+  (isEnded) => {
+    if (isEnded) playerStore.nextMusic();
   },
 );
 

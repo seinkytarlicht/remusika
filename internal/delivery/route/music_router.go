@@ -13,6 +13,5 @@ func MusicRouter(r fiber.Router) {
 	r.Post("/reload-folder", musicController.ReloadFolder)
 	r.Get("/get-all", musicController.GetAll)
 	r.Get("/stream/:uuid", musicController.Stream)
-	r.Get("/metadata/:uuid", musicController.GetMetadata)
 	r.Get("/image/:uuid", musicController.GetImage)
 }

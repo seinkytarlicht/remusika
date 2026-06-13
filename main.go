@@ -44,7 +44,7 @@ func main() {
 
 		helper.Shutdown(app)
 	}()
-	app.Listen(config.Addr)
+	app.Listen(config.ServerAddr)
 
 }
 

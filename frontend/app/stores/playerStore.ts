@@ -1,6 +1,10 @@
+import type { Music } from "~/types/music";
+
 export const usePlayerStore = defineStore("playerStore", () => {
+  const musicStore = useMusicStore();
   const isPlaying = ref<boolean>(false);
   const audioRef = ref<HTMLAudioElement>();
+  const nowPlaying = ref<Music>();
   const duration = ref(0);
   const currentTime = ref(0);
   const isSeeking = ref(false);
@@ -15,7 +19,6 @@ export const usePlayerStore = defineStore("playerStore", () => {
     });
 
     audio.addEventListener("ended", () => {
-      console.log("ended");
       isEnded.value = true;
     });
 
@@ -23,6 +26,26 @@ export const usePlayerStore = defineStore("playerStore", () => {
       if (!isSeeking.value) currentTime.value = audio.currentTime;
     });
   });
+
+  function prevMusic() {
+    musicStore.getPrevSong();
+    isEnded.value = false;
+    if (nowPlaying.value?.uuid == musicStore.currentMusic?.uuid) {
+      audioRef.value?.play();
+    } else {
+      navigateTo(`/play/${musicStore.currentMusic?.uuid}`);
+    }
+  }
+
+  function nextMusic() {
+    musicStore.getNextSong();
+    isEnded.value = false;
+    if (nowPlaying.value?.uuid == musicStore.currentMusic?.uuid) {
+      audioRef.value?.play();
+    } else {
+      navigateTo(`/play/${musicStore.currentMusic?.uuid}`);
+    }
+  }
 
   function playMusic() {
     if (!audioRef.value) return;
@@ -68,12 +91,15 @@ export const usePlayerStore = defineStore("playerStore", () => {
   }
 
   return {
+    nowPlaying,
     isPlaying,
     audioRef,
     currentTime,
     duration,
     isLooping,
     isEnded,
+    nextMusic,
+    prevMusic,
     playMusic,
     startSeek,
     seekMusic,
