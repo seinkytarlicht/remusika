@@ -99,6 +99,7 @@ async function shutdownSystem() {
 <template>
   <UDashboardGroup storage-key="remusika" storage="local">
     <UDashboardSidebar
+      id="playlist-panel"
       resizable
       :min-size="20"
       :max-size="30"
@@ -176,6 +177,7 @@ async function shutdownSystem() {
     </UDashboardSidebar>
 
     <UDashboardSidebar
+      id="metadata-panel"
       resizable
       collapsible
       :collapsed-size="0"
