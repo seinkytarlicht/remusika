@@ -6,9 +6,10 @@ import (
 
 	"github.com/gofiber/fiber/v3"
 	"github.com/gogpu/systray"
+	"github.com/seinkytarlicht/remusika/assets"
 )
 
-func StartTray(app *fiber.App, iconTray []byte) {
+func StartTray(app *fiber.App) {
 
 	tray := systray.New()
 
@@ -20,7 +21,7 @@ func StartTray(app *fiber.App, iconTray []byte) {
 		Shutdown(app)
 	})
 
-	tray.SetIcon(iconTray).
+	tray.SetIcon(assets.IconTray).
 		SetTooltip("ReMusika").
 		SetMenu(menu)
 

@@ -1,6 +1,6 @@
 <br />
 <p align="center">
-  <img src="assets/logo.png" width="140" alt="Rem - ReMusika">
+  <img src="assets/images/logo.png" width="140" alt="Rem - ReMusika">
 </p>
 <br />
 

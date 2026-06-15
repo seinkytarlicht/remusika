@@ -1,6 +1,8 @@
 package config
 
 import (
+	"errors"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"strings"
@@ -19,5 +21,17 @@ func GetAppFolder() string {
 
 	appPath := filepath.Join(configDir, strings.ToLower(AppName))
 
+	info, err := os.Stat(appPath)
+
+	if errors.Is(err, fs.ErrNotExist) || info.IsDir() == false {
+		os.MkdirAll(appPath, 0755)
+	}
+
 	return appPath
+}
+
+func GetAppDBFile() string {
+	dbPath := filepath.Join(GetAppFolder(), "remusika.db")
+
+	return dbPath
 }
