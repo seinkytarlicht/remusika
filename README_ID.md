@@ -2,7 +2,11 @@
 <p align="center">
   <img src="assets/images/logo.png" width="140" alt="Rem - ReMusika">
 </p>
-<br />
+
+[![Release version](https://img.shields.io/github/v/release/seinkytarlicht/remusika?color=brightgreen&label=Latest&style=for-the-badge)](https://github.com/seinkytarlicht/remusika/releases/latest)
+![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/seinkytarlicht/remusika?style=for-the-badge)
+[![GitHub commit activity](https://img.shields.io/github/commit-activity/m/seinkytarlicht/remusika?color=brown&label=Commits&style=for-the-badge)](https://github.com/seinkytarlicht/remusika/commits)
+![GitHub Repo stars](https://img.shields.io/github/stars/seinkytarlicht/remusika?color=orange&style=for-the-badge)
 
 [English](README.md) | Indonesia
 
