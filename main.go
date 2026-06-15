@@ -32,10 +32,11 @@ func main() {
 
 	app := fiber.New()
 	app.Use(logger.New())
-	app.Route("/api", http.SetupApiRoute)
+	setupApiRoutes(app)
 	if !serverOnly {
-		_ClientSetup(app)
+		setupClientRoutes(app)
 	}
+
 	go func() {
 		<-sig
 
@@ -44,7 +45,7 @@ func main() {
 	app.Listen(config.ServerAddr)
 }
 
-func _ClientSetup(app *fiber.App) {
+func setupClientRoutes(app *fiber.App) {
 	go helper.StartTray(app)
 	go helper.OpenBrowser()
 
@@ -52,16 +53,11 @@ func _ClientSetup(app *fiber.App) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	app.Get("/*", static.New("", static.Config{
-		FS: clientFS,
-	}))
 
-	// Fallback not found
-	app.Use(func(c fiber.Ctx) error {
-		c.Path("/")
+	app.Get("/*", static.New("", static.Config{FS: clientFS}))
+	app.Get("*", static.New("index.html", static.Config{FS: clientFS}))
+}
 
-		return static.New("", static.Config{
-			FS: clientFS,
-		})(c)
-	})
+func setupApiRoutes(app *fiber.App) {
+	app.Route("/api", http.SetupApiRoute)
 }
