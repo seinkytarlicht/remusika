@@ -10,8 +10,9 @@ export default defineNuxtConfig({
   },
   modules: ["@nuxt/ui", "@pinia/nuxt"],
   icon: {
-    serverBundle: {
-      collections: ["lucide"],
+    serverBundle: false,
+    clientBundle: {
+      scan: true,
     },
   },
   colorMode: {
