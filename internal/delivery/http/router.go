@@ -16,6 +16,10 @@ func RegisterApiRoutes(app *fiber.App, musicC MusicController, playlistC Playlis
 	playlistR := api.Group("/playlist")
 	playlistR.Get("/get-all", playlistC.GetAll)
 	playlistR.Post("/create", playlistC.Create)
+	playlistR.Put("/update", playlistC.Update)
+	playlistR.Delete("/delete/:id", playlistC.Delete)
+	playlistR.Post("/add-music", playlistC.AddMusic)
+	playlistR.Post("/remove-music", playlistC.RemoveMusic)
 
 	shutdownR := api.Group("/shutdown")
 	shutdownR.Post("/off", shutdownC.Off)

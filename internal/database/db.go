@@ -1,15 +1,14 @@
 package database
 
 import (
-	"database/sql"
-
 	_ "modernc.org/sqlite"
 
+	"github.com/jmoiron/sqlx"
 	"github.com/seinkytarlicht/remusika/config"
 )
 
-func New() (*sql.DB, error) {
-	db, err := sql.Open("sqlite", config.GetAppDBFile())
+func New() (*sqlx.DB, error) {
+	db, err := sqlx.Connect("sqlite", config.GetAppDBFile())
 
 	if err != nil {
 		return nil, err

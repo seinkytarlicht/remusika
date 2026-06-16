@@ -8,7 +8,9 @@ import (
 )
 
 type PlaylistService interface {
-	Create(ctx context.Context, playlist model.Playlist)
+	Create(ctx context.Context, playlist model.Playlist) model.Playlist
+	Update(ctx context.Context, playlist model.Playlist) model.Playlist
+	Delete(ctx context.Context, id int64) bool
 	FindAll(ctx context.Context) []model.Playlist
 }
 
@@ -16,33 +18,26 @@ type PlaylistServiceImpl struct {
 	Repo repository.PlaylistRepository
 }
 
-func (p *PlaylistServiceImpl) Create(ctx context.Context, playlist model.Playlist) {
-	SQL := "INSERT INTO Playlists (name) VALUES (?);"
+func (p *PlaylistServiceImpl) Create(ctx context.Context, playlist model.Playlist) model.Playlist {
+	result := p.Repo.Create(ctx, playlist)
 
-	p.Repo.Query(ctx, SQL, playlist.Name)
+	return result
+}
+
+func (p *PlaylistServiceImpl) Update(ctx context.Context, playlist model.Playlist) model.Playlist {
+	result := p.Repo.Update(ctx, playlist)
+
+	return result
+}
+
+func (p *PlaylistServiceImpl) Delete(ctx context.Context, id int64) bool {
+	result := p.Repo.Delete(ctx, id)
+
+	return result
 }
 
 func (p *PlaylistServiceImpl) FindAll(ctx context.Context) []model.Playlist {
-	SQL := "SELECT * FROM Playlist;"
-
-	rows, err := p.Repo.Query(ctx, SQL)
-
-	if err != nil {
-		panic(err)
-	}
-	defer rows.Close()
-
-	var playlists []model.Playlist
-
-	if rows.Next() {
-		playlist := model.Playlist{}
-		err := rows.Scan(&playlist.Id, &playlist.Name, &playlist.CreatedAt)
-		if err == nil {
-			playlists = append(playlists, playlist)
-		}
-	}
-
-	return playlists
+	return p.Repo.FindAll(ctx)
 }
 
 func NewPlaylistService(repo repository.PlaylistRepository) PlaylistService {
