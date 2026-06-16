@@ -9,5 +9,5 @@ type Music struct {
 	ImageUrl    string `json:"image_url"`
 	AudioUrl    string `json:"audio_url"`
 	TempImgPath string `json:"-"`
-	Path        string `json:"path"`
+	Path        string `json:"-"`
 }

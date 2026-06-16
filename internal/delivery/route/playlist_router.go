@@ -7,4 +7,5 @@ import (
 
 func PlaylistRouter(r fiber.Router, c controller.PlaylistController) {
 	r.Get("/get-all", c.GetAll)
+	r.Post("/create", c.Create)
 }
