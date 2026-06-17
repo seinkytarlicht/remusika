@@ -68,7 +68,7 @@ func runApiServer(app *fiber.App) {
 	musicController := apiDelivery.NewMusicController(musicService)
 
 	playlistRepo := repository.NewPlaylistRepository(db)
-	playlistService := service.NewPlaylistService(playlistRepo)
+	playlistService := service.NewPlaylistService(playlistRepo, musicMemo)
 	playlistController := apiDelivery.NewPlaylistController(playlistService)
 
 	shutdownController := apiDelivery.NewShutdownController()

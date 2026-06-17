@@ -92,7 +92,6 @@ func (m *MusicMemoImpl) ReloadFolder() {
 		musicName := strings.Join(tags[taglib.Title], ", ")
 		musicArtist := strings.Join(tags[taglib.Artist], ", ")
 		musicAlbum := strings.Join(tags[taglib.Album], ", ")
-		playlist := "No Playlist"
 		tmpImg, _ := _CreateImageTemp(lp)
 		imageUrl := ""
 		audioUrl := "/api/music/stream/" + uuid
@@ -109,17 +108,6 @@ func (m *MusicMemoImpl) ReloadFolder() {
 			musicAlbum = "No Album"
 		}
 
-		// Playlist
-		relPath, errR := filepath.Rel(musicFolder, lp)
-		if errR != nil {
-			log.Fatal(errR)
-		}
-		parts := strings.Split(relPath, string(os.PathSeparator))
-		if len(parts) > 1 {
-			playlist = parts[0]
-			m.Playlist = append(m.Playlist, playlist)
-		}
-
 		if tmpImg != "" {
 			imageUrl = "/api/music/image/" + uuid
 		}
@@ -128,7 +116,6 @@ func (m *MusicMemoImpl) ReloadFolder() {
 			Uuid:        uuid,
 			Title:       musicName,
 			Artist:      musicArtist,
-			Playlist:    playlist,
 			Album:       musicAlbum,
 			AudioUrl:    audioUrl,
 			ImageUrl:    imageUrl,
