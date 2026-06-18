@@ -8,7 +8,7 @@ export default defineNuxtConfig({
       routes.clear();
     },
   },
-  modules: ["@nuxt/ui", "@pinia/nuxt"],
+  modules: ["@nuxt/ui", "@pinia/nuxt", "@vueuse/nuxt"],
   icon: {
     serverBundle: false,
     clientBundle: {

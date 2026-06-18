@@ -5,8 +5,8 @@ type Music struct {
 	Title       string `json:"title"`
 	Artist      string `json:"artist"`
 	Album       string `json:"album"`
+	Path        string `json:"path"`
 	ImageUrl    string `json:"image_url"`
 	AudioUrl    string `json:"audio_url"`
 	TempImgPath string `json:"-"`
-	Path        string `json:"-"`
 }

@@ -15,33 +15,33 @@ type PageProps = {
 
 const { music: m } = defineProps<PageProps>();
 
-watch(imageRef, (img) => {
-  if (!img) return;
+// watch(imageRef, (img) => {
+//   if (!img) return;
 
-  img.addEventListener("load", () => {
-    const palette = getPaletteSync(img, { colorCount: 5 });
+//   img.addEventListener("load", () => {
+//     const palette = getPaletteSync(img, { colorCount: 5 });
 
-    if (!palette) return;
+//     if (!palette) return;
 
-    colorDarkImg.value = (
-      palette.find((color) => color.isDark) ?? undefined
-    )?.hex();
-    colorLightImg.value = (
-      palette.find((color) => color.isLight) ?? undefined
-    )?.hex();
-  });
-});
+//     colorDarkImg.value = (
+//       palette.find((color) => color.isDark) ?? undefined
+//     )?.hex();
+//     colorLightImg.value = (
+//       palette.find((color) => color.isLight) ?? undefined
+//     )?.hex();
+//   });
+// });
 
-watch(
-  [() => colorMode.preference, colorLightImg, colorDarkImg],
-  ([preference]) => {
-    if (preference == "dark") {
-      colorButton.value = colorLightImg.value;
-    } else {
-      colorButton.value = colorDarkImg.value;
-    }
-  },
-);
+// watch(
+//   [() => colorMode.preference, colorLightImg, colorDarkImg],
+//   ([preference]) => {
+//     if (preference == "dark") {
+//       colorButton.value = colorLightImg.value;
+//     } else {
+//       colorButton.value = colorDarkImg.value;
+//     }
+//   },
+// );
 </script>
 
 <template>

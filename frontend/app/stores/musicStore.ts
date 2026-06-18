@@ -11,25 +11,24 @@ export const useMusicStore = defineStore("musicStore", () => {
 
   const currentMusic = ref<Music>();
   const currentMusicError = ref(false);
-  const queue = ref<Music[]>();
-  const search = ref<string>();
+  const search = ref<string>("");
+  const searchDebounce = useDebounce(search, 300);
+  const queue = computed<Music[]>(() => {
+    if (!music.value) return [];
 
-  watch([music, search], ([music, search]) => {
-    if (!music) return;
+    let listSong = music.value;
 
-    let listSong = music;
-
-    if (search) {
+    if (searchDebounce.value) {
       listSong = listSong.filter((m) => {
         return (
-          m.title.toLowerCase().includes(search.toLowerCase()) ||
-          m.artist.toLowerCase().includes(search.toLowerCase()) ||
-          m.album.toLowerCase().includes(search.toLowerCase())
+          m.title.toLowerCase().includes(searchDebounce.value.toLowerCase()) ||
+          m.artist.toLowerCase().includes(searchDebounce.value.toLowerCase()) ||
+          m.album.toLowerCase().includes(searchDebounce.value.toLowerCase())
         );
       });
     }
 
-    queue.value = listSong;
+    return listSong;
   });
 
   function setCurrentMusic(uuid: string) {
