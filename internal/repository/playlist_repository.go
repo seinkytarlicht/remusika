@@ -70,6 +70,14 @@ func (p *PlaylistRepositoryImpl) Delete(ctx context.Context, id uint64) bool {
 		return false
 	}
 
+	_, err = p.DB.NamedExecContext(ctx, "DELETE FROM PlaylistItem WHERE PlaylistId=:id", map[string]any{
+		"id": id,
+	})
+
+	if err != nil {
+		return false
+	}
+
 	return true
 }
 
