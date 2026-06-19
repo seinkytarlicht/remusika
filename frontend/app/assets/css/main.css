@@ -2,6 +2,9 @@
 @import "@nuxt/ui";
 
 @theme static {
+  --font-sans: "Inter", sans-serif;
+  --font-logo: "Bebas Neue", sans-serif;
+
   --color-brand-50: oklch(96.17% 0.014 238.01);
   --color-brand-100: oklch(92.48% 0.029 233.61);
   --color-brand-200: oklch(84.84% 0.059 235.95);

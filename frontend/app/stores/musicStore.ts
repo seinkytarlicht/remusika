@@ -13,10 +13,18 @@ export const useMusicStore = defineStore("musicStore", () => {
   const currentMusicError = ref(false);
   const search = ref<string>("");
   const searchDebounce = useDebounce(search, 300);
+  const playlistStore = usePlaylistStore();
   const queue = computed<Music[]>(() => {
     if (!music.value) return [];
 
+    const currentPlaylistName = playlistStore.currentPlaylistName;
+    const playlistMap = playlistStore.playlistMap;
+
     let listSong = music.value;
+    if (currentPlaylistName != "All" && playlistMap) {
+      const playlist = playlistMap.get(currentPlaylistName);
+      if (playlist) listSong = playlist?.playlist_items.map((pi) => pi.music);
+    }
 
     if (searchDebounce.value) {
       listSong = listSong.filter((m) => {

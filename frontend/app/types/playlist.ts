@@ -8,9 +8,9 @@ export interface Playlist {
 }
 
 export interface PlaylistItem {
-  id: 10;
-  playlist_id: 1;
-  music_id: "cbee416a3b01";
-  order_pos: "1";
+  id: number;
+  playlist_id: number;
+  music_id: string;
+  order_pos: string;
   music: Music;
 }

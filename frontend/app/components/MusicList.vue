@@ -1,18 +1,11 @@
 <script setup lang="ts">
 const musicStore = useMusicStore();
-
-// watch(
-//   () => musicStore.music,
-//   (music) => {
-//     console.log(music, musicStore.error);
-//   },
-// );
 </script>
 
 <template>
   <div class="flex flex-col gap-4 flex-1 overflow-y-auto h-full">
     <UInput
-      trailing-icon="i-lucide-search"
+      trailing-icon="i-ph-magnifying-glass"
       size="lg"
       variant="outline"
       placeholder="Search by Title, Artist, or Album"
@@ -23,7 +16,7 @@ const musicStore = useMusicStore();
           color="neutral"
           variant="link"
           size="sm"
-          icon="i-lucide-circle-x"
+          icon="i-ph-x-circle"
           aria-label="Clear input"
           @click="musicStore.search = ''"
         />

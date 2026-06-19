@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import MusicButton from "~/components/MusicButton.vue";
 import MusicList from "~/components/MusicList.vue";
 
 useHead({
@@ -63,10 +62,6 @@ watch(
   },
 );
 
-onMounted(() => {
-  musicStore.fetch();
-});
-
 async function reloadPlaylist() {
   try {
     await $api("/music/reload-folder", {
@@ -120,12 +115,12 @@ async function shutdownSystem() {
 
       <template #header>
         <h1 class="text-3xl font-bold flex gap-2 items-center w-full">
-          <UIcon name="i-lucide-list-music" class="size-8" /> Playlist
+          <UIcon name="i-ph-music-notes-fill" class="size-8" /> Playlist
         </h1>
 
         <UTooltip text="Reload Playlist">
           <UButton
-            icon="i-lucide-refresh-ccw"
+            icon="i-ph-arrow-counter-clockwise"
             color="primary"
             size="lg"
             variant="outline"
@@ -134,9 +129,50 @@ async function shutdownSystem() {
         </UTooltip>
       </template>
 
-      <template #default="{ collapsed }">
-        <div v-for="pl in playlistStore.playlist">
-          <p>{{ pl.name }}</p>
+      <template #default>
+        <div class="flex flex-col gap-2 mb-2">
+          <h4 class="font-semibold text-lg flex items-center gap-2">
+            <UIcon name="i-ph-star-four-fill" /> Auto Playlist
+          </h4>
+          <USeparator />
+          <NuxtLink
+            :to="{
+              query: {
+                list: 'All',
+              },
+            }"
+            class="ms-4 block py-2 px-3 rounded-sm"
+            :class="
+              route.query.list === 'All'
+                ? 'bg-primary/20 text-primary '
+                : 'hover:bg-primary/5'
+            "
+            >All Music</NuxtLink
+          >
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <h4 class="font-semibold text-lg flex items-center gap-2">
+            <UIcon name="i-ph-folder-fill" /> Your Playlist
+          </h4>
+          <USeparator />
+          <div class="ms-4 flex flex-col gap-1">
+            <NuxtLink
+              v-for="pl in playlistStore.playlist"
+              :to="{
+                query: {
+                  list: pl.name,
+                },
+              }"
+              class="block py-2 px-3 rounded-sm"
+              :class="
+                route.query.list === pl.name
+                  ? 'bg-primary/20 text-primary '
+                  : 'hover:bg-primary/5'
+              "
+              >{{ pl.name }}</NuxtLink
+            >
+          </div>
         </div>
       </template>
 
@@ -144,7 +180,7 @@ async function shutdownSystem() {
         <Logo />
         <UTooltip text="Shutdown" :delay-duration="0">
           <UButton
-            icon="i-lucide-power"
+            icon="i-ph-power-bold"
             color="error"
             variant="outline"
             @click="shutdownSystem"

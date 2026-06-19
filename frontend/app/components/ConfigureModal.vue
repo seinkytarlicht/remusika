@@ -1,21 +1,22 @@
 <script setup lang="ts">
 import type { TabsItem } from "@nuxt/ui";
 import VerticalInputGroup from "./VerticalInputGroup.vue";
+const config = useRuntimeConfig();
 
 const tabs = ref<TabsItem[]>([
   {
     label: "Setting",
-    icon: "i-lucide-settings",
+    icon: "i-ph-gear-six",
     slot: "setting",
   },
   {
     label: "Help",
-    icon: "i-lucide-circle-question-mark",
+    icon: "i-ph-question",
     slot: "help",
   },
   {
     label: "About",
-    icon: "i-lucide-info",
+    icon: "i-ph-info",
     slot: "about",
   },
 ]);
@@ -28,7 +29,7 @@ const tabs = ref<TabsItem[]>([
       content: 'max-w-3xl',
     }"
   >
-    <UButton icon="i-lucide-settings-2" color="neutral" variant="outline" />
+    <UButton icon="i-ph-gear-six" color="neutral" variant="outline" />
 
     <template #body>
       <div class="h-125 max-h-125">
@@ -84,7 +85,9 @@ const tabs = ref<TabsItem[]>([
           <template #about>
             <img src="/rem.png" class="size-32 mb-2" />
             <Logo />
-            <p class="text-muted">Build version 0.1</p>
+            <p class="text-muted">
+              Build version {{ config.public.versionBuild }}
+            </p>
           </template>
         </UTabs>
       </div>

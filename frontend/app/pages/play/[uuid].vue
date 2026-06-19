@@ -16,6 +16,10 @@ watch(
   },
 );
 
+definePageMeta({
+  name: "play-stream",
+});
+
 defineShortcuts({
   shift_alt_n: {
     handler: () => {
@@ -78,6 +82,7 @@ defineShortcuts({
 
   <Teleport to="#footer-main-panel">
     <USlider
+      size="sm"
       class="z-10"
       v-model="playerStore.currentTime"
       :min="0"
@@ -87,7 +92,7 @@ defineShortcuts({
       @pointerup="playerStore.endSeek"
       :ui="{
         range: 'rounded-none',
-        track: 'rounded-none',
+        track: 'rounded-none h-[5px]',
       }"
     />
     <div
@@ -109,7 +114,7 @@ defineShortcuts({
                 class="object-cover"
                 ref="imageRef"
               />
-              <UIcon v-else name="i-lucide-music-2" class="size-4" />
+              <UIcon v-else name="i-ph-music-note-fill" class="size-4" />
             </div>
 
             <div class="flex flex-col justify-center flex-1 min-w-0">
@@ -151,7 +156,7 @@ defineShortcuts({
               class="rounded-full size-12 flex justify-center"
               @click="playerStore.prevMusic"
             >
-              <UIcon name="i-lucide-skip-back" class="size-[90%]" />
+              <UIcon name="i-ph-skip-back" class="size-[90%]" />
             </UButton>
           </UTooltip>
 
@@ -171,10 +176,10 @@ defineShortcuts({
               <!-- the inline thing doesn't work somehow  -->
               <UIcon
                 v-if="!playerStore.isPlaying"
-                name="i-lucide-play"
+                name="i-ph-play"
                 class="size-[70%]"
               />
-              <UIcon v-else name="i-lucide-pause" class="size-[80%]" />
+              <UIcon v-else name="i-ph-pause" class="size-[80%]" />
             </UButton>
           </UTooltip>
 
@@ -191,7 +196,7 @@ defineShortcuts({
               class="rounded-full size-12 flex justify-center"
               @click="playerStore.nextMusic"
             >
-              <UIcon name="i-lucide-skip-forward" class="size-[90%]" />
+              <UIcon name="i-ph-skip-forward" class="size-[90%]" />
             </UButton>
           </UTooltip>
 
@@ -212,9 +217,7 @@ defineShortcuts({
             >
               <UIcon
                 :name="
-                  !playerStore.isLooping
-                    ? 'i-lucide-repeat'
-                    : 'i-lucide-repeat-1'
+                  !playerStore.isLooping ? 'i-ph-repeat' : 'i-ph-repeat-once'
                 "
                 class="size-full"
               />
