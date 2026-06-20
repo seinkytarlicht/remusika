@@ -1,3 +1,4 @@
+import type { Music } from "~/types/music";
 import type { Playlist } from "~/types/playlist";
 
 export const usePlaylistStore = defineStore("playlistStore", () => {
@@ -9,19 +10,45 @@ export const usePlaylistStore = defineStore("playlistStore", () => {
   } = useAPI<Playlist[]>("/playlist/get-all");
 
   const route = useRoute();
-  const playlistMap = ref<Map<string, Playlist>>();
-  const currentPlaylistName = computed<string>(() => {
-    const list = route.query["list"];
 
-    if (!list) return "All";
+  const playlistMap = computed<Map<string, Playlist> | undefined>(() => {
+    if (loading.value || !playlist.value) return;
 
-    return String(list);
+    return new Map(playlist.value.map((p) => [p.name, p]));
   });
 
-  watch([playlist, loading], ([playlist, loading]) => {
-    if (loading || !playlist) return;
+  const selectedPlaylistName = computed<string>(() => {
+    const showlist = route.query["playlist"];
 
-    playlistMap.value = new Map(playlist.map((p) => [p.name, p]));
+    if (!showlist) return "All";
+
+    return String(showlist);
+  });
+  const selectedPlaylist = computed<Music[]>(() => {
+    if (!selectedPlaylistName.value || !playlistMap.value) return [];
+    if (selectedPlaylistName.value == "All") return [];
+
+    const playlist = playlistMap.value.get(selectedPlaylistName.value);
+    if (!playlist) return [];
+
+    return playlist?.playlist_items.map((pi) => pi.music);
+  });
+
+  const showedPlaylistName = computed<string>(() => {
+    const showlist = route.query["showlist"];
+
+    if (!showlist) return "All";
+
+    return String(showlist);
+  });
+  const showedPlaylist = computed<Music[]>(() => {
+    if (!showedPlaylistName.value || !playlistMap.value) return [];
+    if (showedPlaylistName.value == "All") return [];
+
+    const playlist = playlistMap.value.get(showedPlaylistName.value);
+    if (!playlist) return [];
+
+    return playlist?.playlist_items.map((pi) => pi.music);
   });
 
   function isMusicInPlaylist(uuid: string, playlistName: string) {
@@ -39,7 +66,10 @@ export const usePlaylistStore = defineStore("playlistStore", () => {
   return {
     playlist,
     playlistMap,
-    currentPlaylistName,
+    showedPlaylistName,
+    showedPlaylist,
+    selectedPlaylistName,
+    selectedPlaylist,
     loading,
     error,
     fetch,

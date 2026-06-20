@@ -138,12 +138,14 @@ async function shutdownSystem() {
           <NuxtLink
             :to="{
               query: {
-                list: 'All',
+                ...route.query,
+                showlist: 'All',
               },
             }"
+            @click="isUseDrawer = false"
             class="ms-4 block py-2 px-3 rounded-sm"
             :class="
-              route.query.list === 'All'
+              route.query.showlist === 'All'
                 ? 'bg-primary/20 text-primary '
                 : 'hover:bg-primary/5'
             "
@@ -161,12 +163,14 @@ async function shutdownSystem() {
               v-for="pl in playlistStore.playlist"
               :to="{
                 query: {
-                  list: pl.name,
+                  ...route.query,
+                  showlist: pl.name,
                 },
               }"
+              @click="isUseDrawer = false"
               class="block py-2 px-3 rounded-sm"
               :class="
-                route.query.list === pl.name
+                route.query.showlist === pl.name
                   ? 'bg-primary/20 text-primary '
                   : 'hover:bg-primary/5'
               "
@@ -215,7 +219,9 @@ async function shutdownSystem() {
       </template>
 
       <template #default="{ collapsed }">
-        <MusicList v-if="!collapsed" />
+        <div class="overflow-y-auto h-full my-4">
+          <MusicList v-if="!collapsed" />
+        </div>
       </template>
     </UDashboardSidebar>
     <!-- Music Sidebar End -->

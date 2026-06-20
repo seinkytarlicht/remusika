@@ -75,157 +75,162 @@ defineShortcuts({
   </Teleport>
 
   <UContainer class="h-full max-w-180" v-if="!isUseDrawer">
-    <MusicList />
+    <MusicList showed-playlist />
   </UContainer>
 
   <DrawerPlay v-model:drawer-open="isUseDrawer" />
 
   <Teleport to="#footer-main-panel">
-    <USlider
-      size="sm"
-      class="z-10"
-      v-model="playerStore.currentTime"
-      :min="0"
-      :max="playerStore.duration"
-      @pointerdown="playerStore.startSeek"
-      @update:model-value="playerStore.seekMusic"
-      @pointerup="playerStore.endSeek"
-      :ui="{
-        range: 'rounded-none',
-        track: 'rounded-none h-[5px]',
-      }"
-    />
-    <div
-      v-if="playerStore.audioRef"
-      class="py-4 px-4 dark:bg-elevated/50 bg-elevated w-full flex flex-col items-center justify-center gap-2 relative"
-    >
-      <div class="flex justify-between gap-8 items-center w-full max-w-full">
-        <div class="min-w-0 w-full cursor-pointer" @click="isUseDrawer = true">
+    <template v-if="!isUseDrawer">
+      <USlider
+        size="sm"
+        class="z-10"
+        v-model="playerStore.currentTime"
+        :min="0"
+        :max="playerStore.duration"
+        @pointerdown="playerStore.startSeek"
+        @update:model-value="playerStore.seekMusic"
+        @pointerup="playerStore.endSeek"
+        :ui="{
+          range: 'rounded-none',
+          track: 'rounded-none h-[5px]',
+        }"
+      />
+      <div
+        v-if="playerStore.audioRef"
+        class="py-4 px-4 dark:bg-elevated/50 bg-elevated w-full flex flex-col items-center justify-center gap-2 relative"
+      >
+        <div class="flex justify-between gap-8 items-center w-full max-w-full">
           <div
-            class="p-2 rounded-lg flex gap-3 group"
-            v-if="musicStore.currentMusic"
+            class="min-w-0 w-full cursor-pointer"
+            @click="isUseDrawer = true"
           >
             <div
-              class="h-14 aspect-square flex justify-center items-center bg-elevated rounded-md overflow-hidden"
+              class="p-2 rounded-lg flex gap-3 group"
+              v-if="musicStore.currentMusic"
             >
-              <img
-                v-if="musicStore.currentMusic.image_url"
-                :src="musicStore.currentMusic.image_url"
-                class="object-cover"
-                ref="imageRef"
-              />
-              <UIcon v-else name="i-ph-music-note-fill" class="size-4" />
-            </div>
+              <div
+                class="h-14 aspect-square flex justify-center items-center bg-elevated rounded-md overflow-hidden"
+              >
+                <img
+                  v-if="musicStore.currentMusic.image_url"
+                  :src="musicStore.currentMusic.image_url"
+                  class="object-cover"
+                  ref="imageRef"
+                />
+                <UIcon v-else name="i-ph-music-note-fill" class="size-4" />
+              </div>
 
-            <div class="flex flex-col justify-center flex-1 min-w-0">
-              <h6 class="truncate group-hover:underline">
-                {{ musicStore.currentMusic.title }}
-              </h6>
-              <p class="text-sm text-muted truncate">
-                {{ musicStore.currentMusic.artist }} -
-                {{ musicStore.currentMusic.album }}
+              <div class="flex flex-col justify-center flex-1 min-w-0">
+                <h6 class="truncate group-hover:underline">
+                  {{ musicStore.currentMusic.title }}
+                </h6>
+                <p class="text-sm text-muted truncate">
+                  {{ musicStore.currentMusic.artist }} -
+                  {{ musicStore.currentMusic.album }}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Controls Start -->
+          <div class="flex gap-4 justify-between items-center w-max-120">
+            <div class="flex justify-between items-center gap-2">
+              <p>
+                {{ formatTime(playerStore.currentTime) }}
+              </p>
+              <p>/</p>
+              <p>
+                {{ formatTime(playerStore.duration) }}
               </p>
             </div>
+
+            <div />
+
+            <!-- Prev -->
+            <UTooltip
+              text="Prev"
+              :kbds="['shift', 'alt', 'n']"
+              :delay-duration="0"
+              :content="{ side: 'top' }"
+            >
+              <UButton
+                color="primary"
+                variant="soft"
+                class="rounded-full size-12 flex justify-center"
+                @click="playerStore.prevMusic"
+              >
+                <UIcon name="i-ph-skip-back" class="size-[90%]" />
+              </UButton>
+            </UTooltip>
+
+            <!-- Play -->
+            <UTooltip
+              text="Play"
+              :kbds="['K']"
+              :delay-duration="0"
+              :content="{ side: 'top' }"
+            >
+              <UButton
+                color="primary"
+                variant="soft"
+                class="rounded-full size-18 flex justify-center"
+                @click="playerStore.playMusic"
+              >
+                <!-- the inline thing doesn't work somehow  -->
+                <UIcon
+                  v-if="!playerStore.isPlaying"
+                  name="i-ph-play"
+                  class="size-[70%]"
+                />
+                <UIcon v-else name="i-ph-pause" class="size-[80%]" />
+              </UButton>
+            </UTooltip>
+
+            <!-- Next Song -->
+            <UTooltip
+              text="Next"
+              :kbds="['shift', 'n']"
+              :delay-duration="0"
+              :content="{ side: 'top' }"
+            >
+              <UButton
+                color="primary"
+                variant="soft"
+                class="rounded-full size-12 flex justify-center"
+                @click="playerStore.nextMusic"
+              >
+                <UIcon name="i-ph-skip-forward" class="size-[90%]" />
+              </UButton>
+            </UTooltip>
+
+            <div />
+
+            <!-- Loop -->
+            <UTooltip
+              text="Loop"
+              :kbds="['L']"
+              :delay-duration="0"
+              :content="{ side: 'top' }"
+            >
+              <UButton
+                color="primary"
+                variant="ghost"
+                class="rounded-full size-12 flex justify-center"
+                @click="playerStore.toggleLoop"
+              >
+                <UIcon
+                  :name="
+                    !playerStore.isLooping ? 'i-ph-repeat' : 'i-ph-repeat-once'
+                  "
+                  class="size-full"
+                />
+              </UButton>
+            </UTooltip>
           </div>
+          <!-- Controls End -->
         </div>
-
-        <!-- Controls Start -->
-        <div class="flex gap-4 justify-between items-center w-max-120">
-          <div class="flex justify-between items-center gap-2">
-            <p>
-              {{ formatTime(playerStore.currentTime) }}
-            </p>
-            <p>/</p>
-            <p>
-              {{ formatTime(playerStore.duration) }}
-            </p>
-          </div>
-
-          <div />
-
-          <!-- Prev -->
-          <UTooltip
-            text="Prev"
-            :kbds="['shift', 'alt', 'n']"
-            :delay-duration="0"
-            :content="{ side: 'top' }"
-          >
-            <UButton
-              color="primary"
-              variant="soft"
-              class="rounded-full size-12 flex justify-center"
-              @click="playerStore.prevMusic"
-            >
-              <UIcon name="i-ph-skip-back" class="size-[90%]" />
-            </UButton>
-          </UTooltip>
-
-          <!-- Play -->
-          <UTooltip
-            text="Play"
-            :kbds="['K']"
-            :delay-duration="0"
-            :content="{ side: 'top' }"
-          >
-            <UButton
-              color="primary"
-              variant="soft"
-              class="rounded-full size-18 flex justify-center"
-              @click="playerStore.playMusic"
-            >
-              <!-- the inline thing doesn't work somehow  -->
-              <UIcon
-                v-if="!playerStore.isPlaying"
-                name="i-ph-play"
-                class="size-[70%]"
-              />
-              <UIcon v-else name="i-ph-pause" class="size-[80%]" />
-            </UButton>
-          </UTooltip>
-
-          <!-- Next Song -->
-          <UTooltip
-            text="Next"
-            :kbds="['shift', 'n']"
-            :delay-duration="0"
-            :content="{ side: 'top' }"
-          >
-            <UButton
-              color="primary"
-              variant="soft"
-              class="rounded-full size-12 flex justify-center"
-              @click="playerStore.nextMusic"
-            >
-              <UIcon name="i-ph-skip-forward" class="size-[90%]" />
-            </UButton>
-          </UTooltip>
-
-          <div />
-
-          <!-- Loop -->
-          <UTooltip
-            text="Loop"
-            :kbds="['L']"
-            :delay-duration="0"
-            :content="{ side: 'top' }"
-          >
-            <UButton
-              color="primary"
-              variant="ghost"
-              class="rounded-full size-12 flex justify-center"
-              @click="playerStore.toggleLoop"
-            >
-              <UIcon
-                :name="
-                  !playerStore.isLooping ? 'i-ph-repeat' : 'i-ph-repeat-once'
-                "
-                class="size-full"
-              />
-            </UButton>
-          </UTooltip>
-        </div>
-        <!-- Controls End -->
       </div>
-    </div>
+    </template>
   </Teleport>
 </template>

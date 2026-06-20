@@ -1,16 +1,18 @@
 <script setup lang="ts">
-// import { getColorSync, getPaletteSync, type BrowserSource } from "colorthief";
 import type { DropdownMenuItem } from "@nuxt/ui";
 import type { Music } from "~/types/music";
 
 type PageProps = {
   music: Music;
+  playlist: string;
 };
 
+const { music: m, playlist } = defineProps<PageProps>();
+
 const { $api } = useNuxtApp();
-const { music: m } = defineProps<PageProps>();
 const route = useRoute();
 const playlistStore = usePlaylistStore();
+const isUseDrawer = useLocalStorage("remusika_use_drawer", true);
 
 const playlistMenu = computed<DropdownMenuItem[]>(() => {
   const playlists = playlistStore.playlist;
@@ -71,39 +73,6 @@ async function removeMusicFromPlaylist(playlist_item_id: number) {
     console.error(e);
   }
 }
-// const imageRef = ref<HTMLImageElement>();
-// const colorLightImg = ref<string>();
-// const colorDarkImg = ref<string>();
-// const colorButton = ref<string>();
-// const colorMode = useColorMode();
-
-// watch(imageRef, (img) => {
-//   if (!img) return;
-
-//   img.addEventListener("load", () => {
-//     const palette = getPaletteSync(img, { colorCount: 5 });
-
-//     if (!palette) return;
-
-//     colorDarkImg.value = (
-//       palette.find((color) => color.isDark) ?? undefined
-//     )?.hex();
-//     colorLightImg.value = (
-//       palette.find((color) => color.isLight) ?? undefined
-//     )?.hex();
-//   });
-// });
-
-// watch(
-//   [() => colorMode.preference, colorLightImg, colorDarkImg],
-//   ([preference]) => {
-//     if (preference == "dark") {
-//       colorButton.value = colorLightImg.value;
-//     } else {
-//       colorButton.value = colorDarkImg.value;
-//     }
-//   },
-// );
 </script>
 
 <template>
@@ -113,14 +82,18 @@ async function removeMusicFromPlaylist(playlist_item_id: number) {
       params: {
         uuid: m.uuid,
       },
-      query: route.query,
+      query: {
+        ...route.query,
+        playlist,
+      },
     }"
+    @click="isUseDrawer = true"
     :key="m.uuid"
   >
     <div
       class="p-2 rounded-lg flex items-center gap-3"
       :class="
-        route.params.uuid === m.uuid
+        route.params.uuid == m.uuid && route.query['playlist'] == playlist
           ? 'bg-primary/20 text-primary font-bold'
           : 'hover:bg-primary/20 text-default hover:text-primary'
       "

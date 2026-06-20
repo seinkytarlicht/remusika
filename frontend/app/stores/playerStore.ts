@@ -1,7 +1,9 @@
 import type { Music } from "~/types/music";
 
 export const usePlayerStore = defineStore("playerStore", () => {
+  const route = useRoute();
   const musicStore = useMusicStore();
+
   const isPlaying = ref<boolean>(false);
   const audioRef = ref<HTMLAudioElement>();
   const nowPlaying = ref<Music>();
@@ -33,7 +35,13 @@ export const usePlayerStore = defineStore("playerStore", () => {
     if (nowPlaying.value?.uuid == musicStore.currentMusic?.uuid) {
       audioRef.value?.play();
     } else {
-      navigateTo(`/play/${musicStore.currentMusic?.uuid}`);
+      navigateTo({
+        name: "play-stream",
+        params: {
+          uuid: musicStore.currentMusic?.uuid,
+        },
+        query: route.query,
+      });
     }
   }
 
@@ -43,7 +51,13 @@ export const usePlayerStore = defineStore("playerStore", () => {
     if (nowPlaying.value?.uuid == musicStore.currentMusic?.uuid) {
       audioRef.value?.play();
     } else {
-      navigateTo(`/play/${musicStore.currentMusic?.uuid}`);
+      navigateTo({
+        name: "play-stream",
+        params: {
+          uuid: musicStore.currentMusic?.uuid,
+        },
+        query: route.query,
+      });
     }
   }
 

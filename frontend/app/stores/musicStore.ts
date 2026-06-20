@@ -9,29 +9,67 @@ export const useMusicStore = defineStore("musicStore", () => {
     refresh: fetch,
   } = useAPI<Music[]>("/music/get-all");
 
+  const playlistStore = usePlaylistStore();
+
   const currentMusic = ref<Music>();
   const currentMusicError = ref(false);
-  const search = ref<string>("");
-  const searchDebounce = useDebounce(search, 300);
-  const playlistStore = usePlaylistStore();
+
+  const searchQueue = ref<string>("");
+  const searchQueueDebounce = useDebounce(searchQueue, 300);
+  const searchShowed = ref<string>("");
+  const searchShowedDebounce = useDebounce(searchShowed, 300);
+
+  const showedPlaylist = computed<Music[]>(() => {
+    if (!music.value) return [];
+
+    const showedPlaylist = playlistStore.showedPlaylist;
+    const showedPlaylistName = playlistStore.showedPlaylistName;
+
+    let listSong = music.value;
+    if (showedPlaylistName != "All") {
+      listSong = showedPlaylist;
+    }
+
+    const search = searchShowedDebounce.value;
+
+    if (search) {
+      listSong = listSong.filter((m) => {
+        return (
+          m.title.toLowerCase().includes(search.toLowerCase()) ||
+          m.artist.toLowerCase().includes(search.toLowerCase()) ||
+          m.album.toLowerCase().includes(search.toLowerCase())
+        );
+      });
+    }
+
+    return listSong;
+  });
+
   const queue = computed<Music[]>(() => {
     if (!music.value) return [];
 
-    const currentPlaylistName = playlistStore.currentPlaylistName;
-    const playlistMap = playlistStore.playlistMap;
+    const selectedPlaylist = playlistStore.selectedPlaylist;
+    const selectedPlaylistName = playlistStore.selectedPlaylistName;
 
     let listSong = music.value;
-    if (currentPlaylistName != "All" && playlistMap) {
-      const playlist = playlistMap.get(currentPlaylistName);
-      if (playlist) listSong = playlist?.playlist_items.map((pi) => pi.music);
+    if (selectedPlaylistName != "All") {
+      listSong = selectedPlaylist;
     }
 
-    if (searchDebounce.value) {
+    return listSong;
+  });
+
+  const queueView = computed<Music[]>(() => {
+    let listSong = queue.value;
+
+    const search = searchQueueDebounce.value;
+
+    if (search) {
       listSong = listSong.filter((m) => {
         return (
-          m.title.toLowerCase().includes(searchDebounce.value.toLowerCase()) ||
-          m.artist.toLowerCase().includes(searchDebounce.value.toLowerCase()) ||
-          m.album.toLowerCase().includes(searchDebounce.value.toLowerCase())
+          m.title.toLowerCase().includes(search.toLowerCase()) ||
+          m.artist.toLowerCase().includes(search.toLowerCase()) ||
+          m.album.toLowerCase().includes(search.toLowerCase())
         );
       });
     }
@@ -98,10 +136,12 @@ export const useMusicStore = defineStore("musicStore", () => {
   return {
     currentMusic,
     currentMusicError,
-    music: queue,
+    music: queueView,
+    showedPlaylist,
+    searchQueue,
+    searchShowed,
     loading,
     error,
-    search,
     fetch,
     setCurrentMusic,
     getPrevSong,

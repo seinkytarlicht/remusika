@@ -4,6 +4,6 @@ const isUseDrawer = useLocalStorage("remusika_use_drawer", true);
 
 <template>
   <UContainer class="h-full max-w-180" v-if="!isUseDrawer">
-    <MusicList />
+    <MusicList showed-playlist />
   </UContainer>
 </template>
