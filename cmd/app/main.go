@@ -1,9 +1,7 @@
 package main
 
 import (
-	"encoding/json"
 	"flag"
-	"log"
 	"os"
 	"os/signal"
 	"syscall"
@@ -32,21 +30,9 @@ func main() {
 	app := fiber.New()
 	app.Use(logger.New())
 	runApiServer(app)
-
 	if !serverOnly {
 		runWebsiteServer(app)
 	}
-
-	// Get the list of routes
-	routes := app.GetRoutes()
-
-	// Pretty-print the routes as JSON
-	routesJSON, err := json.MarshalIndent(routes, "", "  ")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	log.Println(string(routesJSON))
 
 	go func() {
 		<-sig
@@ -77,5 +63,8 @@ func runApiServer(app *fiber.App) {
 }
 
 func runWebsiteServer(app *fiber.App) {
+	go helper.StartTray(app)
+	go helper.OpenBrowser()
+
 	webDelivery.RegisteWebRoutes(app)
 }
