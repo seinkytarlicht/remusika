@@ -31,7 +31,12 @@ export const usePlaylistStore = defineStore("playlistStore", () => {
     const playlist = playlistMap.value.get(selectedPlaylistName.value);
     if (!playlist) return [];
 
-    return playlist?.playlist_items.map((pi) => pi.music);
+    return playlist?.playlist_items.map((pi) => {
+      const plm = pi.music;
+      plm.uuid = pi.music_id;
+
+      return plm;
+    });
   });
 
   const showedPlaylistName = computed<string>(() => {
@@ -48,7 +53,12 @@ export const usePlaylistStore = defineStore("playlistStore", () => {
     const playlist = playlistMap.value.get(showedPlaylistName.value);
     if (!playlist) return [];
 
-    return playlist?.playlist_items.map((pi) => pi.music);
+    return playlist?.playlist_items.map((pi) => {
+      const plm = pi.music;
+      plm.uuid = pi.music_id;
+
+      return plm;
+    });
   });
 
   function isMusicInPlaylist(uuid: string, playlistName: string) {

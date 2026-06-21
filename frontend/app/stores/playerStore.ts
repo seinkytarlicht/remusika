@@ -4,6 +4,7 @@ export const usePlayerStore = defineStore("playerStore", () => {
   const route = useRoute();
   const musicStore = useMusicStore();
 
+  const JUMP_AUDIO = 5; // seconds
   const isPlaying = ref<boolean>(false);
   const audioRef = ref<HTMLAudioElement>();
   const nowPlaying = ref<Music>();
@@ -36,11 +37,11 @@ export const usePlayerStore = defineStore("playerStore", () => {
       audioRef.value?.play();
     } else {
       navigateTo({
-        name: "play-stream",
-        params: {
-          uuid: musicStore.currentMusic?.uuid,
+        name: "play",
+        query: {
+          ...route.query,
+          m: musicStore.currentMusic?.uuid,
         },
-        query: route.query,
       });
     }
   }
@@ -52,11 +53,11 @@ export const usePlayerStore = defineStore("playerStore", () => {
       audioRef.value?.play();
     } else {
       navigateTo({
-        name: "play-stream",
-        params: {
-          uuid: musicStore.currentMusic?.uuid,
+        name: "play",
+        query: {
+          ...route.query,
+          m: musicStore.currentMusic?.uuid,
         },
-        query: route.query,
       });
     }
   }
@@ -69,6 +70,18 @@ export const usePlayerStore = defineStore("playerStore", () => {
     } else {
       audioRef.value.pause();
     }
+  }
+
+  function rewind() {
+    if (!audioRef.value) return;
+
+    audioRef.value.currentTime -= JUMP_AUDIO;
+  }
+
+  function fastForward() {
+    if (!audioRef.value) return;
+
+    audioRef.value.currentTime += JUMP_AUDIO;
   }
 
   function startSeek() {
@@ -115,6 +128,8 @@ export const usePlayerStore = defineStore("playerStore", () => {
     nextMusic,
     prevMusic,
     playMusic,
+    fastForward,
+    rewind,
     startSeek,
     seekMusic,
     endSeek,

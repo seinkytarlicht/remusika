@@ -46,16 +46,6 @@ watch(
 );
 
 watch(
-  [() => musicStore.loading, () => route.params.uuid],
-  ([newLoading, newUuid]) => {
-    if (!newLoading) {
-      playerStore.nowPlaying = musicStore.setCurrentMusic(String(newUuid));
-    }
-  },
-  { immediate: true },
-);
-
-watch(
   () => playerStore.isEnded,
   (isEnded) => {
     if (isEnded) playerStore.nextMusic();

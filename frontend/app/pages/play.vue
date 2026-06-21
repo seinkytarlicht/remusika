@@ -3,6 +3,7 @@ import MusicList from "~/components/MusicList.vue";
 import DrawerPlay from "~/components/play/DrawerPlay.vue";
 import { formatTime } from "~/helper/time";
 
+const route = useRoute();
 const isUseDrawer = useLocalStorage("remusika_use_drawer", true);
 const musicStore = useMusicStore();
 const playerStore = usePlayerStore();
@@ -16,30 +17,42 @@ watch(
   },
 );
 
+watch(
+  [() => musicStore.loading, () => route.query["m"]],
+  ([newLoading, newUuid]) => {
+    if (!newLoading) {
+      playerStore.nowPlaying = musicStore.setCurrentMusic(String(newUuid));
+    }
+  },
+  { immediate: true },
+);
+
 definePageMeta({
-  name: "play-stream",
+  name: "play",
 });
 
 defineShortcuts({
   shift_alt_n: {
-    handler: () => {
-      playerStore.prevMusic();
-    },
+    handler: playerStore.prevMusic,
   },
   shift_n: {
-    handler: () => {
-      playerStore.nextMusic();
-    },
+    handler: playerStore.nextMusic,
+  },
+  " ": {
+    // omg ths is crazy
+    handler: playerStore.playMusic,
   },
   k: {
-    handler: () => {
-      playerStore.playMusic();
-    },
+    handler: playerStore.playMusic,
   },
   l: {
-    handler: () => {
-      playerStore.toggleLoop();
-    },
+    handler: playerStore.toggleLoop,
+  },
+  arrowleft: {
+    handler: playerStore.rewind,
+  },
+  arrowright: {
+    handler: playerStore.fastForward,
   },
 });
 </script>
@@ -101,12 +114,13 @@ defineShortcuts({
         class="py-4 px-4 dark:bg-elevated/50 bg-elevated w-full flex flex-col items-center justify-center gap-2 relative"
       >
         <div class="flex justify-between gap-8 items-center w-full max-w-full">
+          <!-- Music Info Start -->
           <div
-            class="min-w-0 w-full cursor-pointer"
+            class="cursor-pointer flex items-center justify-between gap-5 grou min-w-0"
             @click="isUseDrawer = true"
           >
             <div
-              class="p-2 rounded-lg flex gap-3 group"
+              class="p-2 rounded-lg flex items-center gap-3 flex-1 min-w-0"
               v-if="musicStore.currentMusic"
             >
               <div
@@ -131,10 +145,15 @@ defineShortcuts({
                 </p>
               </div>
             </div>
+
+            <UIcon name="i-ph-caret-up" :size="22" />
           </div>
+          <!-- Music Info End -->
 
           <!-- Controls Start -->
           <div class="flex gap-4 justify-between items-center w-max-120">
+            <div />
+
             <div class="flex justify-between items-center gap-2">
               <p>
                 {{ formatTime(playerStore.currentTime) }}
@@ -176,6 +195,7 @@ defineShortcuts({
                 variant="soft"
                 class="rounded-full size-18 flex justify-center"
                 @click="playerStore.playMusic"
+                autofocus
               >
                 <!-- the inline thing doesn't work somehow  -->
                 <UIcon

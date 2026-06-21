@@ -9,7 +9,7 @@ const drawerEl = ref();
 const dragY = ref(0);
 const isDragging = ref(false);
 
-const CLOSE_THRESHOLD = 300;
+const CLOSE_THRESHOLD = 37 / 100;
 
 const { distanceY } = usePointerSwipe(drawerEl, {
   threshold: 0,
@@ -22,14 +22,12 @@ const { distanceY } = usePointerSwipe(drawerEl, {
   },
   onSwipeEnd() {
     isDragging.value = false;
-    if (dragY.value > CLOSE_THRESHOLD) {
+    if (dragY.value > drawerEl.value.offsetHeight * CLOSE_THRESHOLD) {
       isDrawerOpen.value = false;
     }
     dragY.value = 0;
   },
 });
-
-console.log(isDragging.value);
 </script>
 
 <template>
@@ -60,6 +58,7 @@ console.log(isDragging.value);
           <img
             :src="musicStore.currentMusic.image_url"
             class="w-full h-full object-cover scale-125 relative select-none pointer-events-none"
+            draggable="false"
           />
           <div
             class="absolute w-full h-full top-0 left-0 backdrop-blur-3xl bg-black/40"
@@ -68,13 +67,14 @@ console.log(isDragging.value);
 
         <!-- Image Thumbnail -->
         <div
-          class="relative h-[50%] aspect-square flex justify-center items-center dark:bg-elevated/50 light:bg-elevated rounded-3xl overflow-hidden shadow-white/10 shadow-2xl"
+          class="relative h-[50%] aspect-square flex justify-center items-center dark:bg-elevated/50 light:bg-elevated rounded-3xl overflow-hidden shadow-white/10 shadow-2xl pointer-events-none select-none"
         >
           <img
             v-if="musicStore.currentMusic?.image_url"
             :src="musicStore.currentMusic.image_url"
-            alt=""
+            :alt="musicStore.currentMusic.title"
             class="w-full h-full object-cover select-none pointer-events-none"
+            draggable="false"
           />
           <UIcon v-else name="i-ph-music-note-fill" class="size-[20%]" />
         </div>
