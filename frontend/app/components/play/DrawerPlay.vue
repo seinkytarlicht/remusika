@@ -4,22 +4,42 @@ import { formatTime } from "~/helper/time";
 const musicStore = useMusicStore();
 const playerStore = usePlayerStore();
 const isDrawerOpen = defineModel<boolean>("drawerOpen");
+
+const drawerEl = ref();
+const dragY = ref(0);
+const isDragging = ref(false);
+
+const CLOSE_THRESHOLD = 300;
+
+const { distanceY } = usePointerSwipe(drawerEl, {
+  threshold: 0,
+  onSwipeStart() {
+    isDragging.value = true;
+  },
+  onSwipe() {
+    const delta = -distanceY.value;
+    dragY.value = Math.max(0, delta);
+  },
+  onSwipeEnd() {
+    isDragging.value = false;
+    if (dragY.value > CLOSE_THRESHOLD) {
+      isDrawerOpen.value = false;
+    }
+    dragY.value = 0;
+  },
+});
+
+console.log(isDragging.value);
 </script>
 
 <template>
-  <UDrawer
-    v-model:open="isDrawerOpen"
-    :handle="false"
-    :modal="false"
-    :dismissible="false"
-    :portal="false"
-    :overlay="false"
-    :ui="{
-      content: 'absolute inset-0 h-full max-h-full my-0 z-50',
-      overlay: 'absolute inset-0 bg-black/50 z-50',
-    }"
-  >
-    <template #content>
+  <Transition name="sheet">
+    <div
+      v-if="isDrawerOpen"
+      ref="drawerEl"
+      class="sheet absolute w-full h-full bottom-0 left-0 z-50 bg-default shadow-lg"
+      :style="{ '--drag-y': `${dragY}px` }"
+    >
       <UButton
         icon="i-ph-x-bold"
         size="xl"
@@ -162,6 +182,27 @@ const isDrawerOpen = defineModel<boolean>("drawerOpen");
           </div>
         </div>
       </main>
-    </template>
-  </UDrawer>
+    </div>
+  </Transition>
 </template>
+
+<style scoped>
+.sheet {
+  transform: translateY(var(--drag-y, 0px));
+}
+.no-transition {
+  transition: none !important;
+}
+.sheet-enter-active,
+.sheet-leave-active {
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.sheet-leave-active {
+  transition-timing-function: cubic-bezier(0.4, 0, 1, 1);
+  transition-duration: 0.2s;
+}
+.sheet-enter-from,
+.sheet-leave-to {
+  transform: translateY(100%);
+}
+</style>
