@@ -1,16 +1,16 @@
 {
   "name": "remusika-client",
   "dependencies": {
-    "@nuxt/ui": "^4.8.1",
+    "@nuxt/ui": "^4.9.0",
     "@pinia/nuxt": "0.11.3",
     "@vueuse/core": "^14.3.0",
     "@vueuse/nuxt": "14.3.0",
     "colorthief": "^3.3.1",
-    "nuxt": "^4.4.6",
+    "nuxt": "^4.4.8",
     "pinia": "^3.0.4",
-    "tailwindcss": "^4.3.0",
-    "vue": "^3.5.34",
-    "vue-router": "^5.0.7"
+    "tailwindcss": "^4.3.1",
+    "vue": "^3.5.38",
+    "vue-router": "^5.1.0"
   },
   "private": true,
   "scripts": {
