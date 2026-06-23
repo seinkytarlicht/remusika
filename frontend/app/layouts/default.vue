@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import MusicList from "~/components/MusicList.vue";
+import PlayistButton from "~/components/PlaylistButton.vue";
 
 useHead({
   title: "ReMusika",
@@ -14,7 +15,7 @@ const playlistStore = usePlaylistStore();
 const { initSession, updatePlaybackState, setNextTrack, setPrevTrack } =
   useMediaSession();
 
-const isUseDrawer = useLocalStorage("remusika_use_drawer", true);
+const isUseDrawer = useLocalStorage("remusika_use_drawer", false);
 const audioRef = ref<HTMLAudioElement>();
 
 watch(audioRef, (audio) => {
@@ -63,6 +64,7 @@ async function reloadPlaylist() {
     });
 
     musicStore.fetch();
+    playlistStore.fetch();
   } catch (error) {
     console.error(error);
   }
@@ -108,7 +110,7 @@ async function shutdownSystem() {
           <UIcon name="i-ph-music-notes-fill" class="size-8" /> Playlist
         </h1>
 
-        <UTooltip text="Reload Playlist">
+        <UTooltip text="Reload Playlist" :delay-duration="0">
           <UButton
             icon="i-ph-arrow-counter-clockwise"
             color="primary"
@@ -125,47 +127,34 @@ async function shutdownSystem() {
             <UIcon name="i-ph-star-four-fill" /> Auto Playlist
           </h4>
           <USeparator />
-          <NuxtLink
-            :to="{
-              query: {
-                ...route.query,
-                showlist: 'All',
-              },
-            }"
-            @click="isUseDrawer = false"
-            class="ms-4 block py-2 px-3 rounded-sm"
-            :class="
-              route.query.showlist === 'All'
-                ? 'bg-primary/20 text-primary '
-                : 'hover:bg-primary/5'
-            "
-            >All Music</NuxtLink
-          >
+          <div class="ms-4 flex flex-col">
+            <PlaylistButton
+              :dropdown="false"
+              :playlist="{
+                id: 0,
+                name: 'All',
+                created_at: '',
+                playlist_items: [],
+              }"
+            />
+          </div>
         </div>
 
         <div class="flex flex-col gap-2">
-          <h4 class="font-semibold text-lg flex items-center gap-2">
-            <UIcon name="i-ph-folder-fill" /> Your Playlist
-          </h4>
+          <div class="flex items-center justify-between">
+            <h4 class="flex items-center gap-2 font-semibold text-lg">
+              <UIcon name="i-ph-folder-fill" /> Your Playlist
+            </h4>
+
+            <NewPlaylist />
+          </div>
+
           <USeparator />
-          <div class="ms-4 flex flex-col gap-1">
-            <NuxtLink
+          <div class="ms-4 flex flex-col">
+            <PlayistButton
+              :playlist="pl"
               v-for="pl in playlistStore.playlist"
-              :to="{
-                query: {
-                  ...route.query,
-                  showlist: pl.name,
-                },
-              }"
-              @click="isUseDrawer = false"
-              class="block py-2 px-3 rounded-sm"
-              :class="
-                route.query.showlist === pl.name
-                  ? 'bg-primary/20 text-primary '
-                  : 'hover:bg-primary/5'
-              "
-              >{{ pl.name }}</NuxtLink
-            >
+            />
           </div>
         </div>
       </template>

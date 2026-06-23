@@ -120,7 +120,7 @@ defineShortcuts({
             @click="isUseDrawer = true"
           >
             <div
-              class="p-2 rounded-lg flex items-center gap-3 flex-1 min-w-0"
+              class="group p-2 rounded-lg flex items-center gap-3 flex-1 min-w-0"
               v-if="musicStore.currentMusic"
             >
               <div
@@ -179,7 +179,7 @@ defineShortcuts({
                 class="rounded-full size-12 flex justify-center"
                 @click="playerStore.prevMusic"
               >
-                <UIcon name="i-ph-skip-back" class="size-[90%]" />
+                <UIcon name="i-ph-skip-back-fill" class="size-[90%]" />
               </UButton>
             </UTooltip>
 
@@ -197,13 +197,12 @@ defineShortcuts({
                 @click="playerStore.playMusic"
                 autofocus
               >
-                <!-- the inline thing doesn't work somehow  -->
                 <UIcon
-                  v-if="!playerStore.isPlaying"
-                  name="i-ph-play"
+                  :name="
+                    !playerStore.isPlaying ? 'i-ph-play-fill' : 'i-ph-pause'
+                  "
                   class="size-[70%]"
                 />
-                <UIcon v-else name="i-ph-pause" class="size-[80%]" />
               </UButton>
             </UTooltip>
 
@@ -220,7 +219,7 @@ defineShortcuts({
                 class="rounded-full size-12 flex justify-center"
                 @click="playerStore.nextMusic"
               >
-                <UIcon name="i-ph-skip-forward" class="size-[90%]" />
+                <UIcon name="i-ph-skip-forward-fill" class="size-[90%]" />
               </UButton>
             </UTooltip>
 
@@ -241,7 +240,9 @@ defineShortcuts({
               >
                 <UIcon
                   :name="
-                    !playerStore.isLooping ? 'i-ph-repeat' : 'i-ph-repeat-once'
+                    !playerStore.isLooping
+                      ? 'i-ph-repeat-bold'
+                      : 'i-ph-repeat-once-bold'
                   "
                   class="size-full"
                 />

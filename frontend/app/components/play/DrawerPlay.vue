@@ -115,7 +115,7 @@ const { distanceY } = usePointerSwipe(drawerEl, {
                 class="rounded-full size-12 flex justify-center"
                 @click="playerStore.prevMusic"
               >
-                <UIcon name="i-ph-skip-back" class="size-[90%]" />
+                <UIcon name="i-ph-skip-back-fill" class="size-[90%]" />
               </UButton>
             </UTooltip>
 
@@ -132,13 +132,12 @@ const { distanceY } = usePointerSwipe(drawerEl, {
                 class="rounded-full size-20 flex justify-center"
                 @click="playerStore.playMusic"
               >
-                <!-- the inline thing doesn't work somehow  -->
                 <UIcon
-                  v-if="!playerStore.isPlaying"
-                  name="i-ph-play"
-                  class="size-[80%]"
+                  :name="
+                    !playerStore.isPlaying ? 'i-ph-play-fill' : 'i-ph-pause'
+                  "
+                  class="size-[70%]"
                 />
-                <UIcon v-else name="i-ph-pause" class="size-[80%]" />
               </UButton>
             </UTooltip>
 
@@ -155,7 +154,7 @@ const { distanceY } = usePointerSwipe(drawerEl, {
                 class="rounded-full size-12 flex justify-center"
                 @click="playerStore.nextMusic"
               >
-                <UIcon name="i-ph-skip-forward" class="size-[90%]" />
+                <UIcon name="i-ph-skip-forward-fill" class="size-[90%]" />
               </UButton>
             </UTooltip>
 
@@ -173,7 +172,9 @@ const { distanceY } = usePointerSwipe(drawerEl, {
               >
                 <UIcon
                   :name="
-                    !playerStore.isLooping ? 'i-ph-repeat' : 'i-ph-repeat-once'
+                    !playerStore.isLooping
+                      ? 'i-ph-repeat-bold'
+                      : 'i-ph-repeat-once-bold'
                   "
                   class="size-full"
                 />

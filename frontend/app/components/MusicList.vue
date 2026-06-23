@@ -51,7 +51,7 @@ const searchCurrent = computed({
     </UInput>
 
     <div
-      class="flex flex-col gap-2 overflow-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-slate-800"
+      class="flex flex-col gap-2 overflow-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-primary"
     >
       <template v-if="showedPlaylist">
         <MusicButton

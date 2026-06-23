@@ -14,6 +14,8 @@ const route = useRoute();
 const playlistStore = usePlaylistStore();
 const isUseDrawer = useLocalStorage("remusika_use_drawer", true);
 
+const dropdownModel = ref(false);
+
 const playlistMenu = computed<DropdownMenuItem[]>(() => {
   const playlists = playlistStore.playlist;
 
@@ -78,6 +80,12 @@ async function removeMusicFromPlaylist(playlist_item_id: number) {
 <template>
   <div
     class="p-2 rounded-lg flex items-center gap-3 relative"
+    v-on:contextmenu="
+      (e) => {
+        e.preventDefault();
+        dropdownModel = true;
+      }
+    "
     :class="
       route.query['m'] == m.uuid && route.query['playlist'] == playlist
         ? 'bg-primary/20 text-primary font-bold'
@@ -121,6 +129,7 @@ async function removeMusicFromPlaylist(playlist_item_id: number) {
 
     <UDropdownMenu
       :modal="false"
+      v-model:open="dropdownModel"
       :items="playlistMenu"
       :content="{
         align: 'start',
