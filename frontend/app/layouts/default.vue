@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import MusicList from "~/components/MusicList.vue";
 import PlayistButton from "~/components/PlaylistButton.vue";
+import PlaylistNew from "~/components/PlaylistNew.vue";
 
 useHead({
   title: "ReMusika",
@@ -146,7 +147,7 @@ async function shutdownSystem() {
               <UIcon name="i-ph-folder-fill" /> Your Playlist
             </h4>
 
-            <NewPlaylist />
+            <PlaylistNew />
           </div>
 
           <USeparator />

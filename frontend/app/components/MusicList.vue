@@ -58,7 +58,7 @@ const searchCurrent = computed({
           :music="m"
           v-for="m in musicStore.showedPlaylist"
           :key="m.uuid"
-          :playlist="playlistStore.showedPlaylistName"
+          :playlist_id="playlistStore.showedPlaylistId"
         />
       </template>
       <template v-else>
@@ -66,7 +66,7 @@ const searchCurrent = computed({
           :music="m"
           v-for="m in musicStore.music"
           :key="m.uuid"
-          :playlist="playlistStore.selectedPlaylistName"
+          :playlist_id="playlistStore.selectedPlaylistId"
         />
       </template>
     </div>

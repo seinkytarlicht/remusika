@@ -20,6 +20,33 @@ const tabs = ref<TabsItem[]>([
     slot: "about",
   },
 ]);
+
+const shortcutLists = ref([
+  {
+    title: "Play/Pause Video",
+    kbd: ["K", "Space"],
+  },
+  {
+    title: "Skip Forward",
+    kbd: ["arrow right"],
+  },
+  {
+    title: "Rewind",
+    kbd: ["arrow left"],
+  },
+  {
+    title: "Next Video",
+    kbd: ["shift + n"],
+  },
+  {
+    title: "Prev Video",
+    kbd: ["shift + alt + n"],
+  },
+  {
+    title: "Loop Video",
+    kbd: ["l"],
+  },
+]);
 </script>
 
 <template>
@@ -58,25 +85,13 @@ const tabs = ref<TabsItem[]>([
           <template #help>
             <h3 class="text-xl font-bold">Shortcuts</h3>
             <main class="h-full flex flex-col divide-y divide-accented">
-              <VerticalInputGroup text="Play/Pause Video" class="py-2">
-                <UKbd value="k" size="lg" />
-              </VerticalInputGroup>
-              <VerticalInputGroup text="Next Video" class="py-2">
-                <div class="flex">
-                  <UKbd size="lg">shift</UKbd>
-                  <UKbd value="n" size="lg" />
-                </div>
-              </VerticalInputGroup>
-              <VerticalInputGroup text="Prev Video" class="py-2">
-                <div class="flex">
-                  <UKbd size="lg">shift</UKbd>
-                  <UKbd size="lg">alt</UKbd>
-                  <UKbd value="n" size="lg" />
-                </div>
-              </VerticalInputGroup>
-              <VerticalInputGroup text="Loop Video" class="py-2">
-                <div class="flex">
-                  <UKbd value="l" size="lg" />
+              <VerticalInputGroup
+                :text="s.title"
+                class="py-2"
+                v-for="s in shortcutLists"
+              >
+                <div class="flex gap-2">
+                  <UKbd size="lg" v-for="kbd in s.kbd">{{ kbd }}</UKbd>
                 </div>
               </VerticalInputGroup>
             </main>

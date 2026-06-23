@@ -23,10 +23,10 @@ export const useMusicStore = defineStore("musicStore", () => {
     if (!music.value) return [];
 
     const showedPlaylist = playlistStore.showedPlaylist;
-    const showedPlaylistName = playlistStore.showedPlaylistName;
+    const showedPlaylistId = playlistStore.showedPlaylistId;
 
     let listSong = music.value;
-    if (showedPlaylistName != "All") {
+    if (showedPlaylistId !== 0) {
       listSong = showedPlaylist;
     }
 
@@ -49,10 +49,10 @@ export const useMusicStore = defineStore("musicStore", () => {
     if (!music.value) return [];
 
     const selectedPlaylist = playlistStore.selectedPlaylist;
-    const selectedPlaylistName = playlistStore.selectedPlaylistName;
+    const selectedPlaylistId = playlistStore.selectedPlaylistId;
 
     let listSong = music.value;
-    if (selectedPlaylistName != "All") {
+    if (selectedPlaylistId !== 0) {
       listSong = selectedPlaylist;
     }
 

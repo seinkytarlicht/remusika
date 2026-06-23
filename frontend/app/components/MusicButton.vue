@@ -4,10 +4,10 @@ import type { Music } from "~/types/music";
 
 type PageProps = {
   music: Music;
-  playlist: string;
+  playlist_id: number;
 };
 
-const { music: m, playlist } = defineProps<PageProps>();
+const { music: m, playlist_id } = defineProps<PageProps>();
 
 const { $api } = useNuxtApp();
 const route = useRoute();
@@ -29,7 +29,7 @@ const playlistMenu = computed<DropdownMenuItem[]>(() => {
       children: playlists.map((p) => ({
         onSelect(e: Event) {
           e.preventDefault();
-          const inPlaylist = playlistStore.isMusicInPlaylist(m.uuid, p.name);
+          const inPlaylist = playlistStore.isMusicInPlaylist(m.uuid, p.id);
           if (inPlaylist) {
             removeMusicFromPlaylist(inPlaylist.id);
           } else {
@@ -37,7 +37,7 @@ const playlistMenu = computed<DropdownMenuItem[]>(() => {
           }
         },
         label: p.name,
-        slot: playlistStore.isMusicInPlaylist(m.uuid, p.name)
+        slot: playlistStore.isMusicInPlaylist(m.uuid, p.id)
           ? "in-playlist"
           : "not-in-playlist",
       })),
@@ -87,7 +87,8 @@ async function removeMusicFromPlaylist(playlist_item_id: number) {
       }
     "
     :class="
-      route.query['m'] == m.uuid && route.query['playlist'] == playlist
+      route.query['m'] == m.uuid &&
+      Number(route.query['playlist']) === playlist_id
         ? 'bg-primary/20 text-primary font-bold'
         : 'hover:bg-primary/20 text-default hover:text-primary'
     "
@@ -97,7 +98,7 @@ async function removeMusicFromPlaylist(playlist_item_id: number) {
         name: 'play',
         query: {
           m: m.uuid,
-          playlist,
+          playlist: playlist_id,
           showlist: route.query['showlist'],
         },
       }"

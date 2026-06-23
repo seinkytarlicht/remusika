@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Playlist } from "~/types/playlist";
 import ConfirmDialog from "./ConfirmDialog.vue";
+import PlaylistRename from "./PlaylistRename.vue";
 
 type PageProps = {
   playlist: Playlist;
@@ -16,11 +17,12 @@ const overlay = useOverlay();
 const toast = useToast();
 const playlistStore = usePlaylistStore();
 
-const modal = overlay.create(ConfirmDialog);
+const modalConfirm = overlay.create(ConfirmDialog);
+const modalRename = overlay.create(PlaylistRename);
 const dropdownModel = ref(false);
 
 async function deletePlaylist() {
-  const confirmDialog = modal.open({
+  const confirmDialog = modalConfirm.open({
     title: `Are you sure want to delete "${pl.name}" playlist?`,
     desc: "You can't undo this action.",
     buttonNo: "No! I want to keep it!",
@@ -49,6 +51,12 @@ async function deletePlaylist() {
     }
   }
 }
+
+async function renamePlaylist() {
+  modalRename.open({
+    playlist: pl,
+  });
+}
 </script>
 
 <template>
@@ -61,16 +69,20 @@ async function deletePlaylist() {
       }
     "
     :class="
-      route.query.showlist === pl.name
-        ? 'bg-primary/20 text-primary '
-        : 'hover:bg-primary/5'
+      !isUseDrawer
+        ? Number(route.query['showlist']) === pl.id
+          ? 'bg-primary/20 text-primary '
+          : 'hover:bg-primary/5'
+        : Number(route.query['playlist']) === pl.id
+          ? 'bg-primary/20 text-primary '
+          : 'hover:bg-primary/5'
     "
   >
     <NuxtLink
       :to="{
         query: {
           ...route.query,
-          showlist: pl.name,
+          showlist: pl.id,
         },
       }"
       @click="isUseDrawer = false"
@@ -88,7 +100,12 @@ async function deletePlaylist() {
       :modal="false"
       :items="[
         {
-          label: 'Delete Playlist',
+          label: 'Rename',
+          icon: 'i-ph-pencil-simple-line-fill',
+          onSelect: renamePlaylist,
+        },
+        {
+          label: 'Delete',
           icon: 'i-ph-trash-simple-fill',
           color: 'error',
           onSelect: deletePlaylist,

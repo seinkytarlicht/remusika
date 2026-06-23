@@ -11,24 +11,33 @@ export const usePlaylistStore = defineStore("playlistStore", () => {
 
   const route = useRoute();
 
-  const playlistMap = computed<Map<string, Playlist> | undefined>(() => {
+  const playlistMap = computed<Map<number, Playlist> | undefined>(() => {
     if (loading.value || !playlist.value) return;
 
-    return new Map(playlist.value.map((p) => [p.name, p]));
+    return new Map(playlist.value.map((p) => [p.id, p]));
   });
 
   const selectedPlaylistName = computed<string>(() => {
+    if (!playlistMap.value) return "";
+    if (showedPlaylistId.value == 0) return "All";
+
+    const playlist = playlistMap.value.get(selectedPlaylistId.value);
+    if (!playlist) return "All";
+
+    return playlist.name;
+  });
+  const selectedPlaylistId = computed<number>(() => {
     const showlist = route.query["playlist"];
 
-    if (!showlist) return "All";
+    if (!showlist) return 0;
 
-    return String(showlist);
+    return Number(showlist);
   });
   const selectedPlaylist = computed<Music[]>(() => {
-    if (!selectedPlaylistName.value || !playlistMap.value) return [];
-    if (selectedPlaylistName.value == "All") return [];
+    if (!selectedPlaylistId.value || !playlistMap.value) return [];
+    if (selectedPlaylistId.value == 0) return [];
 
-    const playlist = playlistMap.value.get(selectedPlaylistName.value);
+    const playlist = playlistMap.value.get(selectedPlaylistId.value);
     if (!playlist) return [];
 
     return playlist?.playlist_items.map((pi) => {
@@ -40,17 +49,26 @@ export const usePlaylistStore = defineStore("playlistStore", () => {
   });
 
   const showedPlaylistName = computed<string>(() => {
+    if (!playlistMap.value) return "";
+    if (showedPlaylistId.value == 0) return "All";
+
+    const playlist = playlistMap.value.get(showedPlaylistId.value);
+    if (!playlist) return "All";
+
+    return playlist.name;
+  });
+  const showedPlaylistId = computed<number>(() => {
     const showlist = route.query["showlist"];
 
-    if (!showlist) return "All";
+    if (!showlist) return 0;
 
-    return String(showlist);
+    return Number(showlist);
   });
   const showedPlaylist = computed<Music[]>(() => {
-    if (!showedPlaylistName.value || !playlistMap.value) return [];
-    if (showedPlaylistName.value == "All") return [];
+    if (!showedPlaylistId.value || !playlistMap.value) return [];
+    if (showedPlaylistId.value == 0) return [];
 
-    const playlist = playlistMap.value.get(showedPlaylistName.value);
+    const playlist = playlistMap.value.get(showedPlaylistId.value);
     if (!playlist) return [];
 
     return playlist?.playlist_items.map((pi) => {
@@ -61,8 +79,8 @@ export const usePlaylistStore = defineStore("playlistStore", () => {
     });
   });
 
-  function isMusicInPlaylist(uuid: string, playlistName: string) {
-    const playlist = playlistMap.value?.get(playlistName);
+  function isMusicInPlaylist(uuid: string, playlistId: number) {
+    const playlist = playlistMap.value?.get(playlistId);
 
     if (!playlist) return null;
 
@@ -77,8 +95,10 @@ export const usePlaylistStore = defineStore("playlistStore", () => {
     playlist,
     playlistMap,
     showedPlaylistName,
+    showedPlaylistId,
     showedPlaylist,
     selectedPlaylistName,
+    selectedPlaylistId,
     selectedPlaylist,
     loading,
     error,
