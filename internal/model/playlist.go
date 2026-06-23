@@ -5,4 +5,5 @@ type Playlist struct {
 	Name          string         `json:"name" db:"Name"`
 	CreatedAt     string         `json:"created_at" db:"CreatedAt"`
 	PlaylistItems []PlaylistItem `json:"playlist_items"`
+	Pos           string         `json:"order" db:"Pos"`
 }
