@@ -1,16 +1,21 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   ssr: false,
-  compatibilityDate: "2025-07-15",
-  devtools: { enabled: true },
-  runtimeConfig: {
-    public: {
-      versionBuild: "",
+  router: {
+    options: {
+      hashMode: true,
     },
   },
   hooks: {
     "prerender:routes"({ routes }) {
       routes.clear();
+    },
+  },
+  compatibilityDate: "2025-07-15",
+  devtools: { enabled: true },
+  runtimeConfig: {
+    public: {
+      versionBuild: "",
     },
   },
   modules: ["@nuxt/ui", "@pinia/nuxt", "@vueuse/nuxt"],
