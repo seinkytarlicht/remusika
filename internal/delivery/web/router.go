@@ -23,6 +23,7 @@ func RegisteWebRoutes(app *fiber.App) {
 				return c.Status(fiber.StatusNotFound).SendString("index.html not found")
 			}
 			c.Set("Content-Type", "text/html; charset=utf-8")
+			c.Status(200)
 			return c.Send(data)
 		},
 	}))
