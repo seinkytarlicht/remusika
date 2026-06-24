@@ -12,7 +12,7 @@ export const usePlaylistStore = defineStore("playlistStore", () => {
   const route = useRoute();
 
   const playlistMap = computed<Map<number, Playlist> | undefined>(() => {
-    if (loading.value || !playlist.value) return;
+    if (!playlist.value) return;
 
     return new Map(playlist.value.map((p) => [p.id, p]));
   });

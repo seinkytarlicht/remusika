@@ -25,7 +25,7 @@ const emit = defineEmits<{ close: [boolean] }>();
     :description="desc"
   >
     <template #footer>
-      <div class="flex gap-2 items-end justify-end w-full min-h-[100px]">
+      <div class="flex gap-2 items-end justify-end w-full min-h-25">
         <UButton
           :label="buttonNo"
           @click="emit('close', false)"

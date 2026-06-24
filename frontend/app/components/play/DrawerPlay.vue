@@ -134,7 +134,9 @@ const { distanceY } = usePointerSwipe(drawerEl, {
               >
                 <UIcon
                   :name="
-                    !playerStore.isPlaying ? 'i-ph-play-fill' : 'i-ph-pause'
+                    !playerStore.isPlaying
+                      ? 'i-ph-play-fill'
+                      : 'i-ph-pause-fill'
                   "
                   class="size-[70%]"
                 />
