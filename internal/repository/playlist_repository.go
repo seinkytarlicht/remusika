@@ -85,12 +85,12 @@ func (p *PlaylistRepositoryImpl) FindAll(ctx context.Context) []model.Playlist {
 	playlists := []model.Playlist{}
 	playlistItems := []model.PlaylistItem{}
 
-	err := p.DB.SelectContext(ctx, &playlists, "SELECT * FROM Playlist")
+	err := p.DB.SelectContext(ctx, &playlists, "SELECT * FROM Playlist ORDER BY Pos ASC, CreatedAt Desc")
 	if err != nil {
 		panic(err)
 	}
 
-	err = p.DB.SelectContext(ctx, &playlistItems, "SELECT * FROM PlaylistItem")
+	err = p.DB.SelectContext(ctx, &playlistItems, "SELECT * FROM PlaylistItem ORDER BY Pos ASC, CreatedAt Desc")
 	if err != nil {
 		panic(err)
 	}
