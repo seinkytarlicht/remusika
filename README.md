@@ -159,6 +159,6 @@ dist/remusika
 - [x] Search music
 - [ ] Logo
 - [x] Media Session API
-- [ ] Playlist support
+- [x] Playlist support
 
 ## License

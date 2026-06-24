@@ -159,6 +159,6 @@ dist/remusika
 - [x] Pencarian lagu
 - [ ] Logo
 - [x] Media Session API
-- [ ] Playlist
+- [x] Playlist
 
 ## Lisensi
