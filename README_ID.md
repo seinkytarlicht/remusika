@@ -70,7 +70,7 @@ Playlist musik Anda siap digunakan.
 
 > Pastikan file musik berada di folder Musik bawaan sistem operasi.
 
-> Bermasalah: Jika halaman menampilkan halaman kosong, coba Hard Reload (`Shift` + `R`)
+> Masalah yang ditemukan: Jika halaman menampilkan halaman kosong, coba Hard Reload (`Shift` + `R`) atau coba bersihkan cache browser
 
 ## Lokasi Folder Musik
 
@@ -114,7 +114,7 @@ bun run dev
 Jalankan dari root project:
 
 ```bash
-go run . --server
+go run cmd/app/main.go --server
 ```
 
 ## Struktur Folder
@@ -142,7 +142,7 @@ bun run generate
 Jalankan dari root project:
 
 ```bash
-go build -o dist/remusika
+go build -o dist/remusika cmd/app/main.go
 ```
 
 Hasil build akan tersedia di:

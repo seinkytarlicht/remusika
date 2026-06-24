@@ -9,15 +9,28 @@ export const useMusicStore = defineStore("musicStore", () => {
     refresh: fetch,
   } = useAPI<Music[]>("/music/get-all");
 
+  const playlistStore = usePlaylistStore();
+
   const currentMusic = ref<Music>();
   const currentMusicError = ref(false);
-  const queue = ref<Music[]>();
-  const search = ref<string>();
 
-  watch([music, search], ([music, search]) => {
-    if (!music) return;
+  const searchQueue = ref<string>("");
+  const searchQueueDebounce = useDebounce(searchQueue, 300);
+  const searchShowed = ref<string>("");
+  const searchShowedDebounce = useDebounce(searchShowed, 300);
 
-    let listSong = music;
+  const showedPlaylist = computed<Music[]>(() => {
+    if (!music.value) return [];
+
+    const showedPlaylist = playlistStore.showedPlaylist;
+    const showedPlaylistId = playlistStore.showedPlaylistId;
+
+    let listSong = music.value;
+    if (showedPlaylistId !== 0) {
+      listSong = showedPlaylist;
+    }
+
+    const search = searchShowedDebounce.value;
 
     if (search) {
       listSong = listSong.filter((m) => {
@@ -29,7 +42,39 @@ export const useMusicStore = defineStore("musicStore", () => {
       });
     }
 
-    queue.value = listSong;
+    return listSong;
+  });
+
+  const queue = computed<Music[]>(() => {
+    if (!music.value) return [];
+
+    const selectedPlaylist = playlistStore.selectedPlaylist;
+    const selectedPlaylistId = playlistStore.selectedPlaylistId;
+
+    let listSong = music.value;
+    if (selectedPlaylistId !== 0) {
+      listSong = selectedPlaylist;
+    }
+
+    return listSong;
+  });
+
+  const queueView = computed<Music[]>(() => {
+    let listSong = queue.value;
+
+    const search = searchQueueDebounce.value;
+
+    if (search) {
+      listSong = listSong.filter((m) => {
+        return (
+          m.title.toLowerCase().includes(search.toLowerCase()) ||
+          m.artist.toLowerCase().includes(search.toLowerCase()) ||
+          m.album.toLowerCase().includes(search.toLowerCase())
+        );
+      });
+    }
+
+    return listSong;
   });
 
   function setCurrentMusic(uuid: string) {
@@ -91,10 +136,12 @@ export const useMusicStore = defineStore("musicStore", () => {
   return {
     currentMusic,
     currentMusicError,
-    music: queue,
+    music: queueView,
+    showedPlaylist,
+    searchQueue,
+    searchShowed,
     loading,
     error,
-    search,
     fetch,
     setCurrentMusic,
     getPrevSong,

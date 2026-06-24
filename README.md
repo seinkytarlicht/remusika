@@ -70,7 +70,7 @@ Your music library is now ready to use.
 
 > Make sure your music files are located inside the default Music folder of your operating system.
 
-> Known Issue: If the page is showing a blank page, try hard reload (`Shift` + `R`)
+> Known Issue: If the page is showing a blank page, try hard reload (`Shift` + `R`) or try clear your browser cache
 
 ## Music Folder Location
 
@@ -114,7 +114,7 @@ bun run dev
 From the project root:
 
 ```bash
-go run . --server
+go run cmd/app/main.go --server
 ```
 
 ## Project Structure
@@ -142,7 +142,7 @@ bun run generate
 From the project root:
 
 ```bash
-go build -o dist/remusika
+go build -o dist/remusika cmd/app/main.go
 ```
 
 The generated binary will be available in:

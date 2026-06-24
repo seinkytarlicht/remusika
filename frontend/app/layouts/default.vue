@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import MusicButton from "~/components/MusicButton.vue";
+import MusicList from "~/components/MusicList.vue";
+import PlayistButton from "~/components/PlaylistButton.vue";
+import PlaylistNew from "~/components/PlaylistNew.vue";
 
 useHead({
   title: "ReMusika",
@@ -10,9 +12,11 @@ const { $api } = useNuxtApp();
 const toast = useToast();
 const playerStore = usePlayerStore();
 const musicStore = useMusicStore();
+const playlistStore = usePlaylistStore();
 const { initSession, updatePlaybackState, setNextTrack, setPrevTrack } =
   useMediaSession();
 
+const isUseDrawer = useLocalStorage("remusika_use_drawer", false);
 const audioRef = ref<HTMLAudioElement>();
 
 watch(audioRef, (audio) => {
@@ -44,25 +48,11 @@ watch(
 );
 
 watch(
-  [() => musicStore.loading, () => route.params.uuid],
-  ([newLoading, newUuid]) => {
-    if (!newLoading) {
-      playerStore.nowPlaying = musicStore.setCurrentMusic(String(newUuid));
-    }
-  },
-  { immediate: true },
-);
-
-watch(
   () => playerStore.isEnded,
   (isEnded) => {
     if (isEnded) playerStore.nextMusic();
   },
 );
-
-onMounted(() => {
-  musicStore.fetch();
-});
 
 async function reloadPlaylist() {
   try {
@@ -75,6 +65,7 @@ async function reloadPlaylist() {
     });
 
     musicStore.fetch();
+    playlistStore.fetch();
   } catch (error) {
     console.error(error);
   }
@@ -98,13 +89,13 @@ async function shutdownSystem() {
 
 <template>
   <UDashboardGroup storage-key="remusika" storage="local">
+    <!-- Playlist Sidebar Start -->
     <UDashboardSidebar
       id="playlist-panel"
       resizable
-      :min-size="20"
-      :max-size="30"
-      :default-size="30"
-      :ui="{ footer: 'border-t border-default' }"
+      :default-size="20"
+      :max-size="20"
+      :min-size="15"
     >
       <template #resize-handle="{ onMouseDown, onTouchStart, onDoubleClick }">
         <UDashboardResizeHandle
@@ -117,12 +108,12 @@ async function shutdownSystem() {
 
       <template #header>
         <h1 class="text-3xl font-bold flex gap-2 items-center w-full">
-          <UIcon name="i-lucide-list-music" class="size-8" /> Playlist
+          <UIcon name="i-ph-music-notes-fill" class="size-8" /> Playlist
         </h1>
 
-        <UTooltip text="Reload Playlist">
+        <UTooltip text="Reload Playlist" :delay-duration="0">
           <UButton
-            icon="i-lucide-refresh-ccw"
+            icon="i-ph-arrow-counter-clockwise"
             color="primary"
             size="lg"
             variant="outline"
@@ -131,42 +122,49 @@ async function shutdownSystem() {
         </UTooltip>
       </template>
 
-      <UInput
-        trailing-icon="i-lucide-search"
-        size="lg"
-        variant="outline"
-        placeholder="Search by Title, Artist, or Album"
-        v-model="musicStore.search"
-      >
-        <template v-if="musicStore.search?.length" #trailing>
-          <UButton
-            color="neutral"
-            variant="link"
-            size="sm"
-            icon="i-lucide-circle-x"
-            aria-label="Clear input"
-            @click="musicStore.search = ''"
-          />
-        </template>
-      </UInput>
+      <template #default>
+        <div class="flex flex-col gap-2 mb-2">
+          <h4 class="font-semibold text-lg flex items-center gap-2">
+            <UIcon name="i-ph-star-four-fill" /> Auto Playlist
+          </h4>
+          <USeparator />
+          <div class="ms-4 flex flex-col">
+            <PlaylistButton
+              :dropdown="false"
+              :playlist="{
+                id: 0,
+                name: 'All',
+                created_at: '',
+                playlist_items: [],
+              }"
+            />
+          </div>
+        </div>
 
-      <div
-        class="flex flex-col gap-2 overflow-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-slate-800"
-      >
-        <template v-if="!musicStore.loading">
-          <MusicButton
-            :music="m"
-            v-for="m in musicStore.music"
-            :key="m.uuid"
-          ></MusicButton>
-        </template>
-      </div>
+        <div class="flex flex-col gap-2">
+          <div class="flex items-center justify-between">
+            <h4 class="flex items-center gap-2 font-semibold text-lg">
+              <UIcon name="i-ph-folder-fill" /> Your Playlist
+            </h4>
+
+            <PlaylistNew />
+          </div>
+
+          <USeparator />
+          <div class="ms-4 flex flex-col">
+            <PlayistButton
+              :playlist="pl"
+              v-for="pl in playlistStore.playlist"
+            />
+          </div>
+        </div>
+      </template>
 
       <template #footer>
         <Logo />
         <UTooltip text="Shutdown" :delay-duration="0">
           <UButton
-            icon="i-lucide-power"
+            icon="i-ph-power-bold"
             color="error"
             variant="outline"
             @click="shutdownSystem"
@@ -175,15 +173,69 @@ async function shutdownSystem() {
         <ConfigureModal />
       </template>
     </UDashboardSidebar>
+    <!-- Playlist Sidebar End -->
 
+    <!-- Music Sidebar Start -->
+    <UDashboardSidebar
+      id="music-panel"
+      :collapsed="!isUseDrawer"
+      collapsible
+      :resizable="isUseDrawer"
+      :collapsed-size="0"
+      :min-size="20"
+      :max-size="30"
+      :default-size="30"
+      :ui="{ footer: 'border-t border-default' }"
+      class="min-w-0"
+    >
+      <template #resize-handle="{ onMouseDown, onTouchStart, onDoubleClick }">
+        <UDashboardResizeHandle
+          v-if="isUseDrawer"
+          class="after:absolute after:inset-y-0 after:right-0 after:w-px hover:after:bg-(--ui-border-accented) after:transition"
+          @mousedown="onMouseDown"
+          @touchstart="onTouchStart"
+          @dblclick="onDoubleClick"
+        />
+      </template>
+
+      <template #default="{ collapsed }">
+        <div class="overflow-y-auto h-full my-4">
+          <MusicList v-if="!collapsed" />
+        </div>
+      </template>
+    </UDashboardSidebar>
+    <!-- Music Sidebar End -->
+
+    <!-- Main Panel Start -->
+    <UDashboardPanel>
+      <template #body>
+        <audio
+          ref="audioRef"
+          autoplay
+          @play="playerStore.isPlaying = true"
+          @pause="playerStore.isPlaying = false"
+          :src="musicStore.currentMusic?.audio_url"
+        ></audio>
+
+        <slot />
+      </template>
+
+      <template #footer>
+        <div id="footer-main-panel" />
+      </template>
+    </UDashboardPanel>
+    <!-- Main Panel End -->
+
+    <!-- Metadata Panel Start -->
     <UDashboardSidebar
       id="metadata-panel"
-      resizable
+      :resizable="true"
+      side="right"
       collapsible
       :collapsed-size="0"
-      :min-size="15"
-      :max-size="20"
-      :default-size="20"
+      :min-size="8"
+      :max-size="15"
+      :default-size="15"
       class="min-w-0"
     >
       <template #resize-handle="{ onMouseDown, onTouchStart, onDoubleClick }">
@@ -196,19 +248,9 @@ async function shutdownSystem() {
       </template>
 
       <template #default="{ collapsed }">
-        <div v-show="!collapsed" id="metadata"></div>
+        <div v-show="!collapsed" class="wrap-break-word" id="metadata"></div>
       </template>
     </UDashboardSidebar>
-
-    <UDashboardPanel>
-      <audio
-        ref="audioRef"
-        autoplay
-        @play="playerStore.isPlaying = true"
-        @pause="playerStore.isPlaying = false"
-        :src="musicStore.currentMusic?.audio_url"
-      ></audio>
-      <slot />
-    </UDashboardPanel>
+    <!-- Metadata Panel End -->
   </UDashboardGroup>
 </template>
