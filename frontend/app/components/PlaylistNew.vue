@@ -18,7 +18,7 @@ const schema = z.object({
 type Schema = z.output<typeof schema>;
 
 const playlistModel = reactive<Partial<Schema>>({
-  name: undefined,
+  name: "",
 });
 
 async function savePlaylist(
