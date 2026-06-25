@@ -11,11 +11,23 @@ export const usePlaylistStore = defineStore("playlistStore", () => {
 
   const route = useRoute();
 
-  const playlistMap = computed<Map<number, Playlist> | undefined>(() => {
-    if (!playlist.value) return;
+  const playlistMap = shallowRef<Map<number, Playlist>>(new Map());
 
-    return new Map(playlist.value.map((p) => [p.id, p]));
-  });
+  watch(
+    playlist,
+    (newData) => {
+      if (!newData) return;
+
+      const tempMap = new Map();
+
+      newData.forEach((item) => {
+        tempMap.set(item.id, item);
+      });
+
+      playlistMap.value = tempMap;
+    },
+    { immediate: true },
+  );
 
   const selectedPlaylistName = computed<string>(() => {
     if (!playlistMap.value) return "";

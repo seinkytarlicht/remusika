@@ -49,26 +49,13 @@ const searchCurrent = computed({
         />
       </template>
     </UInput>
-
-    <div
-      class="flex flex-col gap-2 overflow-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-primary"
+    <UScrollArea
+      v-slot="{ item: m }"
+      :items="showedPlaylist ? musicStore.showedPlaylist : musicStore.music"
+      :virtualize="{ estimateSize: 80, skipMeasurement: true }"
+      class="w-full h-full"
     >
-      <template v-if="showedPlaylist">
-        <MusicButton
-          :music="m"
-          v-for="m in musicStore.showedPlaylist"
-          :key="m.uuid"
-          :playlist_id="playlistStore.showedPlaylistId"
-        />
-      </template>
-      <template v-else>
-        <MusicButton
-          :music="m"
-          v-for="m in musicStore.music"
-          :key="m.uuid"
-          :playlist_id="playlistStore.selectedPlaylistId"
-        />
-      </template>
-    </div>
+      <MusicButton :music="m" :playlist_id="playlistStore.showedPlaylistId" />
+    </UScrollArea>
   </div>
 </template>

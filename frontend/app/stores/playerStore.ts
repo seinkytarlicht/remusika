@@ -103,11 +103,11 @@ export const usePlayerStore = defineStore("playerStore", () => {
   }
 
   function endSeek() {
+    if (!audioRef.value) return;
+
     isSeeking.value = false;
 
-    if (audioRef.value?.paused) {
-      audioRef.value?.play();
-    }
+    audioRef.value.play();
   }
 
   function toggleLoop() {

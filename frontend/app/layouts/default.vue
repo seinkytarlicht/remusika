@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import MusicList from "~/components/MusicList.vue";
 import PlayistButton from "~/components/PlaylistButton.vue";
 import PlaylistNew from "~/components/PlaylistNew.vue";
 
@@ -7,7 +6,6 @@ useHead({
   title: "ReMusika",
 });
 
-const route = useRoute();
 const { $api } = useNuxtApp();
 const toast = useToast();
 const playerStore = usePlayerStore();
@@ -16,7 +14,6 @@ const playlistStore = usePlaylistStore();
 const { initSession, updatePlaybackState, setNextTrack, setPrevTrack } =
   useMediaSession();
 
-const isUseDrawer = useLocalStorage("remusika_use_drawer", false);
 const audioRef = ref<HTMLAudioElement>();
 
 watch(audioRef, (audio) => {
@@ -123,25 +120,23 @@ async function shutdownSystem() {
       </template>
 
       <template #default>
-        <div class="flex flex-col gap-2 mb-2">
+        <div class="flex flex-col gap-2 mb-2 flex-1">
           <h4 class="font-semibold text-lg flex items-center gap-2">
             <UIcon name="i-ph-star-four-fill" /> Auto Playlist
           </h4>
           <USeparator />
-          <div class="ms-4 flex flex-col">
-            <PlaylistButton
-              :dropdown="false"
-              :playlist="{
-                id: 0,
-                name: 'All',
-                created_at: '',
-                playlist_items: [],
-              }"
-            />
-          </div>
+          <PlaylistButton
+            :dropdown="false"
+            :playlist="{
+              id: 0,
+              name: 'All',
+              created_at: '',
+              playlist_items: [],
+            }"
+          />
         </div>
 
-        <div class="flex flex-col gap-2">
+        <div class="flex flex-col h-full gap-2 overflow-y-auto">
           <div class="flex items-center justify-between">
             <h4 class="flex items-center gap-2 font-semibold text-lg">
               <UIcon name="i-ph-folder-fill" /> Your Playlist
@@ -151,12 +146,14 @@ async function shutdownSystem() {
           </div>
 
           <USeparator />
-          <div class="ms-4 flex flex-col">
-            <PlayistButton
-              :playlist="pl"
-              v-for="pl in playlistStore.playlist"
-            />
-          </div>
+          <UScrollArea
+            v-slot="{ item: pl }"
+            :items="playlistStore.playlist"
+            :virtualize="{ estimateSize: 40, skipMeasurement: true }"
+            class="w-full h-full"
+          >
+            <PlayistButton :playlist="pl" />
+          </UScrollArea>
         </div>
       </template>
 
@@ -174,37 +171,6 @@ async function shutdownSystem() {
       </template>
     </UDashboardSidebar>
     <!-- Playlist Sidebar End -->
-
-    <!-- Music Sidebar Start -->
-    <UDashboardSidebar
-      id="music-panel"
-      :collapsed="!isUseDrawer"
-      collapsible
-      :resizable="isUseDrawer"
-      :collapsed-size="0"
-      :min-size="20"
-      :max-size="30"
-      :default-size="30"
-      :ui="{ footer: 'border-t border-default' }"
-      class="min-w-0"
-    >
-      <template #resize-handle="{ onMouseDown, onTouchStart, onDoubleClick }">
-        <UDashboardResizeHandle
-          v-if="isUseDrawer"
-          class="after:absolute after:inset-y-0 after:right-0 after:w-px hover:after:bg-(--ui-border-accented) after:transition"
-          @mousedown="onMouseDown"
-          @touchstart="onTouchStart"
-          @dblclick="onDoubleClick"
-        />
-      </template>
-
-      <template #default="{ collapsed }">
-        <div class="overflow-y-auto h-full my-4">
-          <MusicList v-if="!collapsed" />
-        </div>
-      </template>
-    </UDashboardSidebar>
-    <!-- Music Sidebar End -->
 
     <!-- Main Panel Start -->
     <UDashboardPanel>

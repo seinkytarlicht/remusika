@@ -61,7 +61,7 @@ async function renamePlaylist() {
 
 <template>
   <div
-    class="flex items-center justify-between py-2 px-3 rounded-sm relative"
+    class="flex items-center justify-between gap-5 py-2 px-3 rounded-sm relative min-w-0"
     v-on:contextmenu="
       (e) => {
         e.preventDefault();
@@ -90,7 +90,7 @@ async function renamePlaylist() {
     >
     </NuxtLink>
 
-    <p>
+    <p class="truncate">
       {{ pl.name }}
     </p>
 

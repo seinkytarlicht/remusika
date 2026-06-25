@@ -109,7 +109,12 @@ async function removeMusicFromPlaylist(playlist_item_id: number) {
     <div
       class="h-14 aspect-square flex justify-center items-center bg-elevated rounded-md overflow-hidden"
     >
-      <img v-if="m.image_url" :src="m.image_url" class="object-cover" />
+      <img
+        v-if="m.image_url"
+        :src="m.image_url"
+        class="object-cover"
+        loading="lazy"
+      />
       <UIcon v-else name="i-ph-music-note-fill" class="size-4" />
     </div>
 
