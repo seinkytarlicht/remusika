@@ -124,6 +124,19 @@ func (m *MusicMemoImpl) ReloadFolder() {
 		})
 	}
 
+	// Stress Test
+	// for i := range 3000 {
+	// 	music = append(music, model.Music{
+	// 		Uuid:     strconv.Itoa(i),
+	// 		Title:    "No TItle",
+	// 		Artist:   "No Artist",
+	// 		Album:    "No Album",
+	// 		Path:     "No Path",
+	// 		ImageUrl: "",
+	// 		AudioUrl: "",
+	// 	})
+	// }
+
 	m.Musics = music
 }
 

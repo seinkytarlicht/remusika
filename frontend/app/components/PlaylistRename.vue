@@ -94,7 +94,7 @@ const emit = defineEmits<{ close: [boolean] }>();
               color="error"
               @click="emit('close', false)"
             />
-            <UButton label="Create" color="success" type="submit" />
+            <UButton label="Rename" color="success" type="submit" />
           </div>
         </div>
       </UForm>
