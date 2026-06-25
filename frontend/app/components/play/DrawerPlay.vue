@@ -29,12 +29,6 @@ const { distanceY } = usePointerSwipe(drawerEl, {
   },
 });
 
-watch(isUseDrawer, (drawerOpen) => {
-  if (drawerOpen) {
-    playerStore.playMusic();
-  }
-});
-
 defineShortcuts({
   escape: {
     handler: () => (isUseDrawer.value = false),
@@ -148,7 +142,7 @@ defineShortcuts({
               color="primary"
               variant="soft"
               class="rounded-full size-20 flex justify-center"
-              @click="playerStore.playMusic"
+              @click="() => playerStore.playMusic()"
             >
               <UIcon
                 :name="

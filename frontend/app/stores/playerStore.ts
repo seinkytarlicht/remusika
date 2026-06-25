@@ -62,10 +62,10 @@ export const usePlayerStore = defineStore("playerStore", () => {
     }
   }
 
-  function playMusic() {
+  function playMusic(forcePlay: boolean = false) {
     if (!audioRef.value) return;
 
-    if (audioRef.value.paused) {
+    if (audioRef.value.paused || forcePlay) {
       audioRef.value.play();
     } else {
       audioRef.value.pause();

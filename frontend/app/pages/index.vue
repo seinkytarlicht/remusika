@@ -119,11 +119,11 @@ defineShortcuts({
         <div class="flex justify-between gap-8 items-center w-full max-w-full">
           <!-- Music Info Start -->
           <div
-            class="cursor-pointer flex items-center justify-between gap-5 grou min-w-0"
+            class="group cursor-pointer flex items-center justify-between gap-5 grou min-w-0"
             @click="isUseDrawer = true"
           >
             <div
-              class="group p-2 rounded-lg flex items-center gap-3 flex-1 min-w-0"
+              class="p-2 rounded-lg flex items-center gap-3 flex-1 min-w-0"
               v-if="musicStore.currentMusic"
             >
               <div
@@ -197,7 +197,7 @@ defineShortcuts({
                 color="primary"
                 variant="soft"
                 class="rounded-full size-18 flex justify-center"
-                @click="playerStore.playMusic"
+                @click="() => playerStore.playMusic()"
               >
                 <UIcon
                   :name="

@@ -12,6 +12,7 @@ const { music: m, playlist_id } = defineProps<PageProps>();
 const { $api } = useNuxtApp();
 const route = useRoute();
 const playlistStore = usePlaylistStore();
+const { playMusic } = usePlayerStore();
 const isUseDrawer = useLocalStorage("remusika_use_drawer", true);
 
 const dropdownModel = ref(false);
@@ -102,7 +103,12 @@ async function removeMusicFromPlaylist(playlist_item_id: number) {
           showlist: route.query['showlist'],
         },
       }"
-      @click="isUseDrawer = true"
+      @click="
+        () => {
+          isUseDrawer = true;
+          playMusic(true);
+        }
+      "
       class="absolute top-0 bottom-0 right-0 left-0"
     />
 
